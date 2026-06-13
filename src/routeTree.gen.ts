@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelcomeRouteImport } from './routes/welcome'
+import { Route as LoadingRouteImport } from './routes/loading'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ActivateRouteImport } from './routes/activate'
 import { Route as IndexRouteImport } from './routes/index'
@@ -17,6 +18,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
   path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoadingRoute = LoadingRouteImport.update({
+  id: '/loading',
+  path: '/loading',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activate': typeof ActivateRoute
   '/dashboard': typeof DashboardRoute
+  '/loading': typeof LoadingRoute
   '/welcome': typeof WelcomeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activate': typeof ActivateRoute
   '/dashboard': typeof DashboardRoute
+  '/loading': typeof LoadingRoute
   '/welcome': typeof WelcomeRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/activate': typeof ActivateRoute
   '/dashboard': typeof DashboardRoute
+  '/loading': typeof LoadingRoute
   '/welcome': typeof WelcomeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/activate' | '/dashboard' | '/welcome'
+  fullPaths: '/' | '/activate' | '/dashboard' | '/loading' | '/welcome'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/activate' | '/dashboard' | '/welcome'
-  id: '__root__' | '/' | '/activate' | '/dashboard' | '/welcome'
+  to: '/' | '/activate' | '/dashboard' | '/loading' | '/welcome'
+  id: '__root__' | '/' | '/activate' | '/dashboard' | '/loading' | '/welcome'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ActivateRoute: typeof ActivateRoute
   DashboardRoute: typeof DashboardRoute
+  LoadingRoute: typeof LoadingRoute
   WelcomeRoute: typeof WelcomeRoute
 }
 
@@ -76,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/welcome'
       fullPath: '/welcome'
       preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/loading': {
+      id: '/loading'
+      path: '/loading'
+      fullPath: '/loading'
+      preLoaderRoute: typeof LoadingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -106,8 +123,19 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ActivateRoute: ActivateRoute,
   DashboardRoute: DashboardRoute,
+  LoadingRoute: LoadingRoute,
   WelcomeRoute: WelcomeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

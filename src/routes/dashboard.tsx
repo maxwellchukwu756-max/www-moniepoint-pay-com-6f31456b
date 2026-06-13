@@ -79,7 +79,7 @@ function Dashboard() {
             </button>
           </div>
           <h2 className="mt-3 text-4xl font-black tracking-tight">
-            {hidden ? "₦••••••" : "₦0.00"}
+            {hidden ? "₦••••••" : "₦175,000.00"}
           </h2>
           <div className="mt-5 flex gap-3">
             <button className="flex-1 h-10 rounded-xl bg-white text-primary text-sm font-semibold flex items-center justify-center gap-1.5">
