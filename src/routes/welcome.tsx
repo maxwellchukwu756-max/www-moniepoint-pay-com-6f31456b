@@ -36,7 +36,7 @@ function Welcome() {
           <p className="text-sm font-medium tracking-wide uppercase" style={{ color: "#0000FF" }}>
             WELCOME TO
           </p>
-          <h1 className="mt-1 text-lg font-black tracking-tight text-foreground">
+          <h1 className="mt-1 text-lg font-black tracking-tight" style={{ color: "#0000FF" }}>
             MONIEPOINT PAY
           </h1>
           <p className="mt-2 text-xs text-muted-foreground">
