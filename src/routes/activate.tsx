@@ -91,7 +91,7 @@ function Activate() {
           className="relative flex-1 bg-white rounded-t-[28px] px-6 pt-6 pb-6 flex flex-col"
           style={{ boxShadow: "0 -8px 30px -10px rgba(0,0,0,0.12)" }}
         >
-          <h2 className="text-lg font-black tracking-tight">
+          <h2 className="text-xs font-bold tracking-tight text-muted-foreground uppercase">
             {mode === "signup" ? "Create an account with" : "Welcome back to"}
           </h2>
           <p className="text-lg font-black tracking-tight" style={{ color: "#0000FF" }}>
