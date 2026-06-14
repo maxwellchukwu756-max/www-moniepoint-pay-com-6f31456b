@@ -10,8 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelcomeRouteImport } from './routes/welcome'
+import { Route as TransferRouteImport } from './routes/transfer'
+import { Route as SupportRouteImport } from './routes/support'
 import { Route as LoadingRouteImport } from './routes/loading'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as BuyMpayRouteImport } from './routes/buy-mpay'
 import { Route as ActivateRouteImport } from './routes/activate'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ServiceSlugRouteImport } from './routes/service.$slug'
@@ -19,6 +22,16 @@ import { Route as ServiceSlugRouteImport } from './routes/service.$slug'
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
   path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TransferRoute = TransferRouteImport.update({
+  id: '/transfer',
+  path: '/transfer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoadingRoute = LoadingRouteImport.update({
@@ -29,6 +42,11 @@ const LoadingRoute = LoadingRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyMpayRoute = BuyMpayRouteImport.update({
+  id: '/buy-mpay',
+  path: '/buy-mpay',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ActivateRoute = ActivateRouteImport.update({
@@ -50,16 +68,22 @@ const ServiceSlugRoute = ServiceSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activate': typeof ActivateRoute
+  '/buy-mpay': typeof BuyMpayRoute
   '/dashboard': typeof DashboardRoute
   '/loading': typeof LoadingRoute
+  '/support': typeof SupportRoute
+  '/transfer': typeof TransferRoute
   '/welcome': typeof WelcomeRoute
   '/service/$slug': typeof ServiceSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activate': typeof ActivateRoute
+  '/buy-mpay': typeof BuyMpayRoute
   '/dashboard': typeof DashboardRoute
   '/loading': typeof LoadingRoute
+  '/support': typeof SupportRoute
+  '/transfer': typeof TransferRoute
   '/welcome': typeof WelcomeRoute
   '/service/$slug': typeof ServiceSlugRoute
 }
@@ -67,8 +91,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/activate': typeof ActivateRoute
+  '/buy-mpay': typeof BuyMpayRoute
   '/dashboard': typeof DashboardRoute
   '/loading': typeof LoadingRoute
+  '/support': typeof SupportRoute
+  '/transfer': typeof TransferRoute
   '/welcome': typeof WelcomeRoute
   '/service/$slug': typeof ServiceSlugRoute
 }
@@ -77,24 +104,33 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/activate'
+    | '/buy-mpay'
     | '/dashboard'
     | '/loading'
+    | '/support'
+    | '/transfer'
     | '/welcome'
     | '/service/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/activate'
+    | '/buy-mpay'
     | '/dashboard'
     | '/loading'
+    | '/support'
+    | '/transfer'
     | '/welcome'
     | '/service/$slug'
   id:
     | '__root__'
     | '/'
     | '/activate'
+    | '/buy-mpay'
     | '/dashboard'
     | '/loading'
+    | '/support'
+    | '/transfer'
     | '/welcome'
     | '/service/$slug'
   fileRoutesById: FileRoutesById
@@ -102,8 +138,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ActivateRoute: typeof ActivateRoute
+  BuyMpayRoute: typeof BuyMpayRoute
   DashboardRoute: typeof DashboardRoute
   LoadingRoute: typeof LoadingRoute
+  SupportRoute: typeof SupportRoute
+  TransferRoute: typeof TransferRoute
   WelcomeRoute: typeof WelcomeRoute
   ServiceSlugRoute: typeof ServiceSlugRoute
 }
@@ -115,6 +154,20 @@ declare module '@tanstack/react-router' {
       path: '/welcome'
       fullPath: '/welcome'
       preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/transfer': {
+      id: '/transfer'
+      path: '/transfer'
+      fullPath: '/transfer'
+      preLoaderRoute: typeof TransferRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/loading': {
@@ -129,6 +182,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buy-mpay': {
+      id: '/buy-mpay'
+      path: '/buy-mpay'
+      fullPath: '/buy-mpay'
+      preLoaderRoute: typeof BuyMpayRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/activate': {
@@ -158,8 +218,11 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ActivateRoute: ActivateRoute,
+  BuyMpayRoute: BuyMpayRoute,
   DashboardRoute: DashboardRoute,
   LoadingRoute: LoadingRoute,
+  SupportRoute: SupportRoute,
+  TransferRoute: TransferRoute,
   WelcomeRoute: WelcomeRoute,
   ServiceSlugRoute: ServiceSlugRoute,
 }
