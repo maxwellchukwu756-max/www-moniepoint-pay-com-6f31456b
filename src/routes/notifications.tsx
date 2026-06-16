@@ -16,12 +16,10 @@ function NotificationsPage() {
 
   useEffect(() => { markAllRead(); }, [markAllRead]);
 
-  const PRIMARY = "#0000FF";
-
   return (
     <PhoneFrame>
-      <div className="flex-1 flex flex-col" style={{ background: PRIMARY, color: "#FFFFFF" }}>
-        <div className="px-6 pt-10 pb-6">
+      <div className="flex-1 flex flex-col bg-background text-foreground">
+        <div className="px-6 pt-10 pb-6 brand-gradient text-white">
           <button onClick={() => router.history.back()} className="h-10 w-10 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
             <ArrowLeft className="h-5 w-5" />
           </button>
@@ -36,11 +34,11 @@ function NotificationsPage() {
           </div>
         </div>
 
-        <div className="flex-1 px-4 pb-8 space-y-2.5">
+        <div className="flex-1 px-4 py-4 space-y-2.5">
           {notifications.length === 0 ? (
-            <div className="rounded-2xl bg-white/10 border border-white/20 p-8 text-center mx-2">
+            <div className="rounded-2xl bg-card border border-dashed border-border p-8 text-center mx-2">
               <p className="text-sm font-bold">No notifications yet</p>
-              <p className="text-[11px] opacity-80 mt-1">Your transaction activity will appear here</p>
+              <p className="text-[11px] text-muted-foreground mt-1">Your transaction activity will appear here</p>
             </div>
           ) : (
             notifications.map((n, i) => {
@@ -52,23 +50,26 @@ function NotificationsPage() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.02 }}
-                  className="rounded-2xl bg-white/15 border border-white/20 backdrop-blur p-3.5 flex items-start gap-3"
+                  className="rounded-2xl bg-card border border-border p-3.5 flex items-start gap-3"
+                  style={{ boxShadow: "var(--shadow-card)" }}
                 >
-                  <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center shrink-0">
-                    <Check className="h-5 w-5" style={{ color: PRIMARY }} strokeWidth={3} />
+                  <div className="h-10 w-10 rounded-xl bg-brand-soft flex items-center justify-center shrink-0">
+                    <Check className="h-5 w-5 text-primary" strokeWidth={3} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <p className="text-sm font-bold truncate">{n.title}</p>
                       {n.amount !== 0 && (
-                        <span className="text-sm font-black shrink-0">{isIn ? "+" : "-"}{formatNGN(Math.abs(n.amount))}</span>
+                        <span className={`text-sm font-black shrink-0 ${isIn ? "text-primary" : "text-foreground"}`}>
+                          {isIn ? "+" : "-"}{formatNGN(Math.abs(n.amount))}
+                        </span>
                       )}
                     </div>
-                    <p className="text-[11px] opacity-90 truncate">{n.sub}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">{n.sub}</p>
                     <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[9px] uppercase tracking-widest font-black px-2 py-0.5 rounded-full bg-white text-[#0000FF]">{n.status}</span>
-                      <span className="text-[10px] opacity-80">{d.toLocaleDateString("en-NG", { day: "2-digit", month: "short", year: "numeric" })}</span>
-                      <span className="text-[10px] opacity-80">· {d.toLocaleTimeString("en-NG", { hour: "2-digit", minute: "2-digit" })}</span>
+                      <span className="text-[9px] uppercase tracking-widest font-black px-2 py-0.5 rounded-full bg-brand-soft text-primary">{n.status}</span>
+                      <span className="text-[10px] text-muted-foreground">{d.toLocaleDateString("en-NG", { day: "2-digit", month: "short", year: "numeric" })}</span>
+                      <span className="text-[10px] text-muted-foreground">· {d.toLocaleTimeString("en-NG", { hour: "2-digit", minute: "2-digit" })}</span>
                     </div>
                   </div>
                 </motion.div>
