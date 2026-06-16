@@ -166,16 +166,15 @@ function ServicePage() {
   if (!svc) {
     return (
       <PhoneFrame>
-        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center gap-4" style={{ background: "#0000FF", color: "#FFFFFF" }}>
-          <p className="text-sm opacity-90">Service not found.</p>
-          <Link to="/dashboard" className="text-sm font-semibold underline">Back to dashboard</Link>
+        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center gap-4 bg-background">
+          <p className="text-sm text-muted-foreground">Service not found.</p>
+          <Link to="/dashboard" className="text-sm font-semibold underline text-primary">Back to dashboard</Link>
         </div>
       </PhoneFrame>
     );
   }
 
   const Icon = svc.icon;
-  const PRIMARY = "#0000FF";
 
   const onMpayChange = (v: string) => {
     setMpayCode(v);
@@ -209,8 +208,8 @@ function ServicePage() {
 
   return (
     <PhoneFrame>
-      <div className="flex-1 flex flex-col" style={{ background: PRIMARY, color: "#FFFFFF" }}>
-        <div className="relative px-6 pt-10 pb-6 overflow-hidden">
+      <div className="flex-1 flex flex-col bg-background text-foreground">
+        <div className="relative px-6 pt-10 pb-6 overflow-hidden brand-gradient text-white">
           <div className="relative flex items-center justify-between">
             <button onClick={() => router.history.back()} className="h-10 w-10 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
               <ArrowLeft className="h-5 w-5" />
@@ -232,12 +231,12 @@ function ServicePage() {
         <div className="flex-1 px-6 pt-5 pb-8">
           {done ? (
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center justify-center text-center gap-3 pt-12">
-              <div className="h-16 w-16 rounded-full bg-white flex items-center justify-center">
-                <Check className="h-8 w-8" style={{ color: PRIMARY }} strokeWidth={3} />
+              <div className="h-16 w-16 rounded-full brand-gradient flex items-center justify-center">
+                <Check className="h-8 w-8 text-white" strokeWidth={3} />
               </div>
               <p className="text-base font-bold">Successful</p>
-              <p className="text-xs opacity-90 max-w-[240px]">Your {svc.title.toLowerCase()} request was completed.</p>
-              <Link to="/dashboard" className="mt-4 h-11 px-6 rounded-2xl text-sm font-semibold flex items-center justify-center" style={{ background: "#FFFFFF", color: PRIMARY }}>
+              <p className="text-xs text-muted-foreground max-w-[240px]">Your {svc.title.toLowerCase()} request was completed.</p>
+              <Link to="/dashboard" className="mt-4 h-11 px-6 rounded-2xl text-sm font-semibold flex items-center justify-center brand-gradient text-white">
                 Back to Dashboard
               </Link>
             </motion.div>
@@ -245,11 +244,11 @@ function ServicePage() {
             <form onSubmit={submit} className="space-y-3">
               {svc.presets && (
                 <div>
-                  <p className="text-[10px] font-semibold opacity-80 mb-2 uppercase tracking-widest">Quick Amount</p>
+                  <p className="text-[10px] font-semibold text-muted-foreground mb-2 uppercase tracking-widest">Quick Amount</p>
                   <div className="grid grid-cols-3 gap-2">
                     {svc.presets.map((p) => (
                       <button key={p} type="button" onClick={() => setValues((v) => ({ ...v, amount: p }))}
-                        className="h-10 rounded-xl border border-white/40 text-xs font-semibold">
+                        className="h-10 rounded-xl border border-border text-xs font-semibold hover:bg-brand-soft hover:text-primary hover:border-primary transition-colors">
                         ₦{p}
                       </button>
                     ))}
@@ -259,29 +258,28 @@ function ServicePage() {
 
               {svc.fields.map((f) => (
                 <div key={f.name}>
-                  <label className="text-[10px] font-semibold opacity-80 mb-1 block uppercase tracking-widest">{f.label}</label>
+                  <label className="text-[10px] font-semibold text-muted-foreground mb-1 block uppercase tracking-widest">{f.label}</label>
                   <input type={f.type ?? "text"} value={values[f.name] ?? ""}
                     onChange={(e) => setValues((v) => ({ ...v, [f.name]: e.target.value }))}
                     placeholder={f.placeholder}
-                    className="w-full h-11 rounded-xl bg-white text-foreground px-3 text-sm font-medium outline-none" />
+                    className="w-full h-11 rounded-xl bg-card border border-border text-foreground px-3 text-sm font-medium outline-none focus:border-primary" />
                 </div>
               ))}
 
               {svc.requiresMpay && (
                 <div>
-                  <label className="text-[10px] font-semibold opacity-80 mb-1 block uppercase tracking-widest">MPAY ID CODE</label>
+                  <label className="text-[10px] font-semibold text-muted-foreground mb-1 block uppercase tracking-widest">MPAY ID CODE</label>
                   <input value={mpayCode} onChange={(e) => onMpayChange(e.target.value)}
                     placeholder="Enter your MPAY ID CODE"
-                    className="w-full h-11 rounded-xl bg-white text-foreground px-3 text-sm font-medium outline-none" />
-                  {mpayError && <p className="mt-1 text-[11px] font-semibold text-red-300">{mpayError}</p>}
+                    className="w-full h-11 rounded-xl bg-card border border-border text-foreground px-3 text-sm font-medium outline-none focus:border-primary" />
+                  {mpayError && <p className="mt-1 text-[11px] font-semibold text-destructive">{mpayError}</p>}
                 </div>
               )}
 
-              {error && <p className="text-[11px] font-semibold text-red-300">{error}</p>}
+              {error && <p className="text-[11px] font-semibold text-destructive">{error}</p>}
 
               <motion.button whileTap={{ scale: 0.97 }} type="submit"
-                className="w-full h-12 rounded-2xl text-sm font-bold mt-2"
-                style={{ background: "#FFFFFF", color: PRIMARY }}>
+                className="w-full h-12 rounded-2xl text-sm font-bold mt-2 brand-gradient text-white">
                 {svc.cta}
               </motion.button>
             </form>

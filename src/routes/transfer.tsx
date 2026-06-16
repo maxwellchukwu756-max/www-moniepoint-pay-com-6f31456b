@@ -77,13 +77,10 @@ function TransferPage() {
     }, 1800);
   };
 
-  // Blue & White Theme
-  const PRIMARY = "#0000FF";
-
   return (
     <PhoneFrame>
-      <div className="flex-1 flex flex-col" style={{ background: PRIMARY, color: "#FFFFFF" }}>
-        <div className="px-6 pt-10 pb-5 relative overflow-hidden">
+      <div className="flex-1 flex flex-col bg-background text-foreground">
+        <div className="px-6 pt-10 pb-5 relative overflow-hidden brand-gradient text-white">
           <div className="flex items-center justify-between">
             <button onClick={() => (step === "form" ? router.history.back() : setStep("form"))} className="h-10 w-10 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
               <ArrowLeft className="h-5 w-5" />
@@ -112,19 +109,19 @@ function TransferPage() {
                 <Input label="Recipient Account Number" value={accountNumber} onChange={(v) => setAccountNumber(v.replace(/\D/g, "").slice(0, 10))} placeholder="10-digit account" type="tel" />
 
                 <div>
-                  <label className="text-[10px] uppercase tracking-widest font-semibold opacity-80 mb-1 block">Search or Select Bank</label>
+                  <label className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-1 block">Search or Select Bank</label>
                   <div className="relative">
-                    <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#0000FF]" />
+                    <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary" />
                     <input
                       value={showBankList ? bankQuery : (bank || bankQuery)}
                       onFocus={() => { setShowBankList(true); setBankQuery(bank); setBank(""); }}
                       onChange={(e) => setBankQuery(e.target.value)}
                       placeholder="Type to search banks..."
-                      className="w-full h-11 rounded-xl bg-white text-foreground pl-10 pr-3 text-sm font-medium outline-none"
+                      className="w-full h-11 rounded-xl bg-card border border-border text-foreground pl-10 pr-3 text-sm font-medium outline-none focus:border-primary"
                     />
                   </div>
                   {showBankList && (
-                    <div className="mt-2 max-h-48 overflow-y-auto rounded-xl bg-white text-foreground">
+                    <div className="mt-2 max-h-48 overflow-y-auto rounded-xl bg-card border border-border">
                       {filteredBanks.length === 0 && <p className="text-xs text-muted-foreground p-3 text-center">No banks match "{bankQuery}"</p>}
                       {filteredBanks.map((b) => (
                         <button key={b} type="button"
@@ -140,22 +137,22 @@ function TransferPage() {
                 <Input label="Amount (₦)" value={amount} onChange={(v) => setAmount(v.replace(/[^\d.]/g, ""))} placeholder="0.00" type="tel" />
                 <div>
                   <Input label="MPAY ID CODE" value={mpayCode} onChange={onMpayChange} placeholder="Enter your MPAY ID CODE" />
-                  {mpayError && <p className="mt-1 text-[11px] font-semibold text-red-300">{mpayError}</p>}
+                  {mpayError && <p className="mt-1 text-[11px] font-semibold text-destructive">{mpayError}</p>}
                 </div>
 
-                {error && <p className="text-[11px] font-semibold text-red-300">{error}</p>}
+                {error && <p className="text-[11px] font-semibold text-destructive">{error}</p>}
 
-                <motion.button whileTap={{ scale: 0.97 }} onClick={proceed} className="w-full h-12 rounded-2xl text-sm font-bold mt-2" style={{ background: "#FFFFFF", color: PRIMARY }}>
+                <motion.button whileTap={{ scale: 0.97 }} onClick={proceed} className="w-full h-12 rounded-2xl text-sm font-bold mt-2 brand-gradient text-white">
                   CONTINUE
                 </motion.button>
-                <Link to="/buy-mpay" className="block text-center text-[11px] font-bold underline mt-1">Don't have an MPAY ID? Buy one</Link>
+                <Link to="/buy-mpay" className="block text-center text-[11px] font-bold text-primary underline mt-1">Don't have an MPAY ID? Buy one</Link>
               </motion.div>
             )}
 
             {step === "confirm" && (
               <motion.div key="confirm" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}>
-                <p className="text-[11px] uppercase tracking-widest font-semibold opacity-80 mb-2">Confirm Transfer</p>
-                <div className="rounded-2xl bg-white/15 border border-white/20 backdrop-blur p-4 space-y-3">
+                <p className="text-[11px] uppercase tracking-widest font-semibold text-muted-foreground mb-2">Confirm Transfer</p>
+                <div className="rounded-2xl bg-card border border-border p-4 space-y-3" style={{ boxShadow: "var(--shadow-card)" }}>
                   <Row label="Recipient Name" value={name} />
                   <Row label="Account Number" value={accountNumber} />
                   <Row label="Bank Name" value={bank} />
@@ -164,32 +161,32 @@ function TransferPage() {
                   <Row label="Time" value={new Date().toLocaleTimeString("en-NG", { hour: "2-digit", minute: "2-digit" })} />
                 </div>
                 <div className="mt-5 grid grid-cols-2 gap-3">
-                  <button onClick={() => setStep("form")} className="h-12 rounded-2xl border border-white/40 text-sm font-bold">EDIT</button>
-                  <motion.button whileTap={{ scale: 0.97 }} onClick={doSend} className="h-12 rounded-2xl text-sm font-bold" style={{ background: "#FFFFFF", color: PRIMARY }}>PROCEED</motion.button>
+                  <button onClick={() => setStep("form")} className="h-12 rounded-2xl border border-border text-sm font-bold">EDIT</button>
+                  <motion.button whileTap={{ scale: 0.97 }} onClick={doSend} className="h-12 rounded-2xl text-sm font-bold brand-gradient text-white">PROCEED</motion.button>
                 </div>
               </motion.div>
             )}
 
             {step === "sending" && (
-              <motion.div key="sending" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center text-center gap-4 pt-16">
+              <motion.div key="sending" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center text-center gap-4 pt-16 text-primary">
                 <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
                   <Loader2 className="h-14 w-14" />
                 </motion.div>
                 <p className="text-lg font-black">Sending...</p>
-                <p className="text-xs opacity-90">Please wait...</p>
+                <p className="text-xs text-muted-foreground">Please wait...</p>
               </motion.div>
             )}
 
             {step === "success" && tx && (
               <motion.div key="success" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center">
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 200 }}
-                  className="mx-auto h-20 w-20 rounded-full bg-white flex items-center justify-center">
-                  <Check className="h-10 w-10" style={{ color: PRIMARY }} strokeWidth={3} />
+                  className="mx-auto h-20 w-20 rounded-full brand-gradient flex items-center justify-center">
+                  <Check className="h-10 w-10 text-white" strokeWidth={3} />
                 </motion.div>
                 <h2 className="mt-4 text-xl font-black tracking-tight">Transfer Successful</h2>
-                <p className="text-xs opacity-90">Your money is on its way</p>
+                <p className="text-xs text-muted-foreground">Your money is on its way</p>
 
-                <div className="mt-5 rounded-2xl bg-white/15 border border-white/20 backdrop-blur p-4 space-y-2.5 text-left">
+                <div className="mt-5 rounded-2xl bg-card border border-border p-4 space-y-2.5 text-left" style={{ boxShadow: "var(--shadow-card)" }}>
                   <Row label="Recipient Name" value={name} />
                   <Row label="Account Number" value={accountNumber} />
                   <Row label="Bank Name" value={bank} />
@@ -199,17 +196,17 @@ function TransferPage() {
                   <Row label="Month" value={new Date(tx.dateISO).toLocaleString("en-NG", { month: "long" })} />
                   <Row label="Year" value={String(new Date(tx.dateISO).getFullYear())} />
                   <Row label="Transaction Ref" value={tx.ref} />
-                  <div className="flex items-center justify-between pt-2 border-t border-white/20">
-                    <span className="text-[10px] uppercase tracking-widest font-semibold opacity-80">Status</span>
-                    <span className="text-xs font-black px-2.5 py-1 rounded-full text-[#0000FF] bg-white">SUCCESSFUL</span>
+                  <div className="flex items-center justify-between pt-2 border-t border-border">
+                    <span className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground">Status</span>
+                    <span className="text-xs font-black px-2.5 py-1 rounded-full text-primary bg-brand-soft">SUCCESSFUL</span>
                   </div>
                 </div>
 
                 <div className="mt-5 grid grid-cols-2 gap-3">
-                  <button className="h-12 rounded-2xl border border-white/40 text-sm font-bold flex items-center justify-center gap-2">
+                  <button className="h-12 rounded-2xl border border-border text-sm font-bold flex items-center justify-center gap-2">
                     <Share2 className="h-4 w-4" /> Share
                   </button>
-                  <button onClick={() => navigate({ to: "/dashboard" })} className="h-12 rounded-2xl text-sm font-bold" style={{ background: "#FFFFFF", color: PRIMARY }}>
+                  <button onClick={() => navigate({ to: "/dashboard" })} className="h-12 rounded-2xl text-sm font-bold brand-gradient text-white">
                     Done
                   </button>
                 </div>
@@ -225,9 +222,9 @@ function TransferPage() {
 function Input({ label, value, onChange, placeholder, type = "text" }: { label: string; value: string; onChange: (v: string) => void; placeholder: string; type?: string }) {
   return (
     <div>
-      <label className="text-[10px] uppercase tracking-widest font-semibold opacity-80 mb-1 block">{label}</label>
+      <label className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-1 block">{label}</label>
       <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full h-11 rounded-xl bg-white text-foreground px-3 text-sm font-medium outline-none placeholder:text-muted-foreground" />
+        className="w-full h-11 rounded-xl bg-card border border-border text-foreground px-3 text-sm font-medium outline-none focus:border-primary placeholder:text-muted-foreground" />
     </div>
   );
 }
@@ -235,8 +232,8 @@ function Input({ label, value, onChange, placeholder, type = "text" }: { label: 
 function Row({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
     <div className="flex items-center justify-between gap-3">
-      <span className="text-[11px] opacity-80">{label}</span>
-      <span className={`text-sm font-bold text-right ${highlight ? "text-base" : ""}`}>{value}</span>
+      <span className="text-[11px] text-muted-foreground">{label}</span>
+      <span className={`text-sm font-bold text-right ${highlight ? "text-base text-primary" : ""}`}>{value}</span>
     </div>
   );
 }

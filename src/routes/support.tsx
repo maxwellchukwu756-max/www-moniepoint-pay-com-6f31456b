@@ -28,18 +28,17 @@ const options = [
     icon: Headphones,
     title: "Live Chat",
     sub: "Talk to our team in-app, 24/7",
-    color: "#FFFFFF",
+    color: "#0000FF",
     href: "#",
   },
 ];
 
 function Support() {
   const router = useRouter();
-  const PRIMARY = "#0000FF";
   return (
     <PhoneFrame>
-      <div className="flex-1 flex flex-col" style={{ background: PRIMARY, color: "#FFFFFF" }}>
-        <div className="px-6 pt-10 pb-6 relative overflow-hidden">
+      <div className="flex-1 flex flex-col bg-background text-foreground">
+        <div className="px-6 pt-10 pb-6 relative overflow-hidden brand-gradient text-white">
           <button onClick={() => router.history.back()} className="h-10 w-10 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
             <ArrowLeft className="h-5 w-5" />
           </button>
@@ -58,14 +57,15 @@ function Support() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08 }}
               whileTap={{ scale: 0.97 }}
-              className="flex items-center gap-3 p-4 rounded-2xl bg-white/15 backdrop-blur border border-white/20"
+              className="flex items-center gap-3 p-4 rounded-2xl bg-card border border-border"
+              style={{ boxShadow: "var(--shadow-card)" }}
             >
-              <div className="h-12 w-12 rounded-2xl bg-white flex items-center justify-center">
-                <o.icon className="h-6 w-6" style={{ color: o.color === "#FFFFFF" ? PRIMARY : o.color }} />
+              <div className="h-12 w-12 rounded-2xl flex items-center justify-center" style={{ background: `${o.color}15` }}>
+                <o.icon className="h-6 w-6" style={{ color: o.color }} />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold">{o.title}</p>
-                <p className="text-[11px] opacity-80">{o.sub}</p>
+                <p className="text-[11px] text-muted-foreground">{o.sub}</p>
               </div>
             </motion.a>
           ))}

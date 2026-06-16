@@ -110,12 +110,10 @@ function EarnMore() {
     } else { copy(); }
   };
 
-  const PRIMARY = "#0000FF";
-
   return (
     <PhoneFrame>
-      <div className="flex-1 flex flex-col" style={{ background: PRIMARY, color: "#FFFFFF" }}>
-        <div className="px-6 pt-10 pb-6">
+      <div className="flex-1 flex flex-col bg-background text-foreground">
+        <div className="px-6 pt-10 pb-6 brand-gradient text-white">
           <button onClick={() => router.history.back()} className="h-10 w-10 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
             <ArrowLeft className="h-5 w-5" />
           </button>
@@ -130,34 +128,34 @@ function EarnMore() {
           </div>
         </div>
 
-        <div className="flex-1 px-6 pb-8 space-y-4">
-          <button onClick={() => setShowReferral(s => !s)} className="w-full rounded-2xl bg-white text-[#0000FF] p-4 flex items-center gap-3 text-left">
-            <div className="h-10 w-10 rounded-xl bg-[#0000FF]/10 flex items-center justify-center">
-              <Users className="h-5 w-5" />
+        <div className="flex-1 px-6 py-5 space-y-4">
+          <button onClick={() => setShowReferral(s => !s)} className="w-full rounded-2xl bg-card border border-border p-4 flex items-center gap-3 text-left" style={{ boxShadow: "var(--shadow-card)" }}>
+            <div className="h-10 w-10 rounded-xl bg-brand-soft flex items-center justify-center">
+              <Users className="h-5 w-5 text-primary" />
             </div>
             <div className="flex-1">
               <p className="text-sm font-black">Invite Users</p>
-              <p className="text-[11px] opacity-80">Earn ₦1,000 for each successful referral</p>
+              <p className="text-[11px] text-muted-foreground">Earn ₦1,000 for each successful referral</p>
             </div>
-            <span className="text-[10px] font-bold">{showReferral ? "HIDE" : "OPEN"}</span>
+            <span className="text-[10px] font-bold text-primary">{showReferral ? "HIDE" : "OPEN"}</span>
           </button>
 
           {showReferral && (
-            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl bg-white/15 border border-white/20 backdrop-blur p-4 space-y-3">
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl bg-card border border-border p-4 space-y-3">
               <div>
-                <p className="text-[10px] uppercase tracking-widest font-semibold opacity-80">Your Referral Link</p>
+                <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground">Your Referral Link</p>
                 <p className="mt-1 text-xs font-bold break-all select-all">{referralLink}</p>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <button onClick={copy} className="h-11 rounded-xl bg-white text-[#0000FF] text-xs font-bold flex items-center justify-center gap-2">
+                <button onClick={copy} className="h-11 rounded-xl brand-gradient text-white text-xs font-bold flex items-center justify-center gap-2">
                   {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                   {copied ? "Copied" : "Copy Link"}
                 </button>
-                <button onClick={share} className="h-11 rounded-xl border border-white/40 text-xs font-bold flex items-center justify-center gap-2">
+                <button onClick={share} className="h-11 rounded-xl border border-border text-xs font-bold flex items-center justify-center gap-2">
                   <Share2 className="h-4 w-4" /> Share
                 </button>
               </div>
-              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/20">
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border">
                 <Stat label="Referral Count" value="0" />
                 <Stat label="Successful" value="0" />
                 <Stat label="Earnings" value="₦0.00" />
@@ -167,26 +165,25 @@ function EarnMore() {
           )}
 
           <div>
-            <p className="text-[11px] uppercase tracking-widest font-semibold opacity-80 mb-2 flex items-center gap-1.5">
+            <p className="text-[11px] uppercase tracking-widest font-semibold text-muted-foreground mb-2 flex items-center gap-1.5">
               <Gift className="h-3.5 w-3.5" /> Today's Tasks
             </p>
             <div className="space-y-2.5">
               {tasks.map(t => {
                 const done = completed[t.id] === true;
                 return (
-                  <div key={t.id} className="rounded-2xl bg-white/15 border border-white/20 backdrop-blur p-3.5 flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center">
-                      <Sparkles className="h-5 w-5" style={{ color: PRIMARY }} />
+                  <div key={t.id} className="rounded-2xl bg-card border border-border p-3.5 flex items-center gap-3" style={{ boxShadow: "var(--shadow-card)" }}>
+                    <div className="h-10 w-10 rounded-xl bg-brand-soft flex items-center justify-center">
+                      <Sparkles className="h-5 w-5 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold truncate">{t.title}</p>
-                      <p className="text-[11px] opacity-90">Reward: {formatNGN(t.reward)}</p>
+                      <p className="text-[11px] text-muted-foreground">Reward: {formatNGN(t.reward)}</p>
                     </div>
                     <button
                       disabled={done}
                       onClick={() => complete(t.id, t.title, t.reward)}
-                      className="h-9 px-3 rounded-xl text-[11px] font-black disabled:opacity-60"
-                      style={{ background: done ? "rgba(255,255,255,0.2)" : "#FFFFFF", color: done ? "#FFFFFF" : PRIMARY }}
+                      className={`h-9 px-3 rounded-xl text-[11px] font-black ${done ? "bg-muted text-muted-foreground" : "brand-gradient text-white"}`}
                     >
                       {done ? "DONE" : "EARN"}
                     </button>
@@ -203,8 +200,8 @@ function EarnMore() {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl bg-white/10 p-2.5">
-      <p className="text-[9px] uppercase tracking-widest font-semibold opacity-80">{label}</p>
+    <div className="rounded-xl bg-muted p-2.5">
+      <p className="text-[9px] uppercase tracking-widest font-semibold text-muted-foreground">{label}</p>
       <p className="text-sm font-black mt-0.5">{value}</p>
     </div>
   );
