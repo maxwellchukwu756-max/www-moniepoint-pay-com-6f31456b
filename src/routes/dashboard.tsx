@@ -243,9 +243,26 @@ function Dashboard() {
         </motion.div>
 
         {/* Quick Actions */}
-        <div className="px-6 mt-6">
+        <div className="px-6 mt-6 relative">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-sm">Quick Actions</h3>
+            {/* Floating Jane support bubble — top side near Cable TV */}
+            <Link to="/support" className="pointer-events-auto">
+              <motion.div
+                animate={{ y: [0, -6, 0] }}
+                transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+                className="relative inline-flex items-center gap-1.5 bg-white rounded-full pl-1 pr-2.5 py-1 border border-blue-100"
+                style={{ boxShadow: "0 4px 14px rgba(59,130,246,0.18)" }}
+              >
+                <div className="absolute inset-0 rounded-full" style={{ background: "radial-gradient(circle, rgba(59,130,246,0.18), transparent 70%)", filter: "blur(8px)", transform: "scale(1.3)" }} />
+                <img
+                  src={janeSupport.url}
+                  alt="Jane customer support"
+                  className="relative h-6 w-6 rounded-full object-cover border border-white"
+                />
+                <span className="relative text-[10px] font-semibold text-blue-600">Hi, I'm Jane</span>
+              </motion.div>
+            </Link>
           </div>
           <div className="grid grid-cols-4 gap-y-4 gap-x-2">
             {quickActions.map((a, i) => <ActionTile key={a.slug} a={a} i={i} />)}
