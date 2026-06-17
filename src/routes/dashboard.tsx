@@ -200,7 +200,7 @@ function Dashboard() {
               {firstName[0]?.toUpperCase() ?? "M"}
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">{greet} 👋</p>
+              <p className="text-xs text-muted-foreground">{greet}</p>
               <p className="font-semibold text-sm">{firstName}</p>
             </div>
           </div>
