@@ -319,30 +319,6 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Floating Jane chat bubble — bottom, glow, continuous jump */}
-      <div className="absolute left-0 right-0 bottom-24 z-30 flex justify-center pointer-events-none">
-        <Link to="/support" className="pointer-events-auto">
-          <motion.div
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
-            className="relative"
-          >
-            <div
-              className="absolute inset-0 rounded-full"
-              style={{ background: "radial-gradient(circle, rgba(0,0,255,0.45), transparent 70%)", filter: "blur(14px)", transform: "scale(1.4)" }}
-            />
-            <div
-              className="relative inline-flex items-center gap-2 brand-gradient text-white rounded-full pl-2 pr-4 py-2"
-              style={{ boxShadow: "0 0 24px rgba(0,0,255,0.55), 0 8px 20px rgba(0,0,255,0.4)" }}
-            >
-              <div className="h-7 w-7 rounded-full bg-white flex items-center justify-center" style={{ color: "#16A34A" }}>
-                <MessageCircle className="h-4 w-4" />
-              </div>
-              <span className="text-xs font-bold">💬 Hi, I'm Jane</span>
-            </div>
-          </motion.div>
-        </Link>
-      </div>
 
       {/* Bottom Nav */}
       <div className="absolute bottom-0 left-0 right-0">
