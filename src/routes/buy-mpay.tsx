@@ -1,9 +1,10 @@
 import { createFileRoute, useRouter, useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, AlertTriangle, Upload, Check, IdCard, Copy, MessageCircle, Headphones } from "lucide-react";
+import { ArrowLeft, AlertTriangle, Upload, Check, IdCard, Copy, MessageCircle, Headphones, ShieldCheck, XCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { PhoneFrame } from "@/components/PhoneFrame";
 import { useAccount, formatNGN, useBalance, generateMpayCode, updateCurrentAccount, WHATSAPP_GROUP, WHATSAPP_SUPPORT } from "@/lib/store";
+import bankWarningAsset from "@/assets/bank-warning.png.asset.json";
 
 export const Route = createFileRoute("/buy-mpay")({
   head: () => ({ meta: [{ title: "Buy MPAY ID — Moniepoint Pay" }] }),
@@ -101,22 +102,52 @@ function BuyMpay() {
             )}
 
             {step === "warning" && (
-              <motion.div key="warning" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="text-center pt-4">
-                <motion.div
-                  animate={{ rotate: [0, -8, 8, -8, 0] }}
-                  transition={{ duration: 0.6, repeat: 2 }}
-                  className="mx-auto h-20 w-20 rounded-full flex items-center justify-center"
-                  style={{ background: "#FEF3C7" }}
-                >
-                  <AlertTriangle className="h-10 w-10" style={{ color: "#D97706" }} />
-                </motion.div>
-                <h2 className="mt-4 text-xl font-black tracking-tight">WARNING</h2>
-                <p className="mt-3 text-sm font-semibold">Never use OPAY or PALMPAY Bank for MPAY ID Code purchase.</p>
-                <p className="mt-2 text-xs text-muted-foreground leading-relaxed">Using OPAY or PALMPAY may cause your payment to decline.</p>
-                <p className="mt-2 text-xs text-muted-foreground leading-relaxed">Use other Nigerian Banks for successful payment.</p>
-                <motion.button whileTap={{ scale: 0.97 }} onClick={() => setStep("payment")} className="mt-6 w-full h-12 rounded-2xl text-sm font-bold brand-gradient text-white">
-                  OK
-                </motion.button>
+              <motion.div key="warning" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="pt-2">
+                <div className="rounded-2xl bg-amber-50 border border-amber-200 p-5 text-center">
+                  <motion.div
+                    animate={{ rotate: [0, -8, 8, -8, 0] }}
+                    transition={{ duration: 0.6, repeat: 2 }}
+                    className="mx-auto h-20 w-20 rounded-full flex items-center justify-center bg-amber-100"
+                  >
+                    <AlertTriangle className="h-10 w-10 text-amber-600" />
+                  </motion.div>
+
+                  <h2 className="mt-4 text-xl font-black tracking-tight text-amber-700">Payment Notice</h2>
+
+                  <div className="mt-4 rounded-xl bg-white border border-amber-100 p-4 shadow-sm">
+                    <img
+                      src={bankWarningAsset.url}
+                      alt="Supported bank reference"
+                      className="mx-auto h-24 w-24 object-contain rounded-2xl"
+                    />
+                    <p className="mt-3 text-xs font-semibold text-amber-700">Use any Nigerian bank for your payment</p>
+                  </div>
+
+                  <div className="mt-4 space-y-2 text-left">
+                    <div className="flex items-start gap-3 rounded-xl bg-red-50 border border-red-100 p-3">
+                      <XCircle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-bold text-red-700">OPAY & PalmPay MFB are not accepted</p>
+                        <p className="text-[11px] text-red-600 mt-0.5 leading-relaxed">
+                          Payments sent from OPAY or PalmPay MFB may not be recognized and could cause delays or failed activation.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3 rounded-xl bg-green-50 border border-green-100 p-3">
+                      <ShieldCheck className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-bold text-green-700">Other banks are welcome</p>
+                        <p className="text-[11px] text-green-600 mt-0.5 leading-relaxed">
+                          You can safely complete your purchase using GTBank, First Bank, UBA, Zenith, Moniepoint MFB, Access Bank, Kuda, or any other Nigerian bank.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <motion.button whileTap={{ scale: 0.97 }} onClick={() => setStep("payment")} className="mt-6 w-full h-12 rounded-2xl text-sm font-bold brand-gradient text-white">
+                    I UNDERSTAND, CONTINUE
+                  </motion.button>
+                </div>
               </motion.div>
             )}
 
