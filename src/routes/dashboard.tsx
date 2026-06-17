@@ -10,6 +10,8 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PhoneFrame } from "@/components/PhoneFrame";
 import { useAccount, useBalance, useTxs, formatNGN, useNotifications } from "@/lib/store";
+import janeSupport from "@/assets/jane-support.jpg.asset.json";
+
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
