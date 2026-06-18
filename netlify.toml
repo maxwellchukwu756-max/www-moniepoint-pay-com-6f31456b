@@ -14,3 +14,6 @@
   to = "/.netlify/functions/server"
   status = 200
   force = false
+
+# Sync trigger: edited to force a fresh Lovable preview rebuild after GitHub merge.
+
