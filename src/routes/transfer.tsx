@@ -72,6 +72,10 @@ function TransferPage() {
       addTx({ id: ref, kind: "transfer", name, sub: `${bank} · ${accountNumber}`, amount: -amt, bank, account: accountNumber, reference: ref, dateISO });
       addNotification({ id: ref, title: "Transfer Successful", sub: `${name} · ${bank}`, amount: -amt, status: "Successful", dateISO });
       setBalance(Math.max(0, balance - amt));
+      // Surface to dashboard live activity ticker
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("mp:activity", { detail: { name, bank, amount: amt } }));
+      }
       setTx({ ref, dateISO });
       setStep("success");
     }, 1800);

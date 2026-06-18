@@ -45,7 +45,6 @@ const moreServices = [
   { slug: "flights", icon: Plane, label: "Flights", color: "#0EA5E9" },
   { slug: "shopping", icon: ShoppingBag, label: "Shopping", color: "#BE185D" },
   { slug: "earn-more", icon: Sparkles, label: "Earn More", color: "#16A34A" },
-  { slug: "withdraw", icon: Wallet, label: "Withdraw", color: "#0891B2" },
   { slug: "support", icon: Headphones, label: "Support", color: "#0EA5E9" },
 ];
 
@@ -131,6 +130,8 @@ function LiveTicker() {
   useEffect(() => {
     queueRef.current = buildQueue();
     let cancelled = false;
+    let timer1: ReturnType<typeof setTimeout>;
+    let timer2: ReturnType<typeof setTimeout>;
 
     const next = () => {
       if (cancelled) return;
@@ -139,11 +140,19 @@ function LiveTicker() {
       item.date = new Date();
       setCurrent(item);
       setVisible(true);
-      setTimeout(() => { if (!cancelled) setVisible(false); }, 3000);
-      setTimeout(() => { if (!cancelled) next(); }, 3800);
+      timer1 = setTimeout(() => { if (!cancelled) setVisible(false); }, 3000);
+      timer2 = setTimeout(() => { if (!cancelled) next(); }, 3800);
     };
     next();
-    return () => { cancelled = true; };
+
+    const onActivity = (e: Event) => {
+      const detail = (e as CustomEvent).detail as { name: string; bank: string; amount: number } | undefined;
+      if (!detail) return;
+      // Prepend user's own transfer so it shows next
+      queueRef.current.unshift({ name: detail.name, bank: detail.bank, amount: detail.amount, date: new Date() });
+    };
+    window.addEventListener("mp:activity", onActivity);
+    return () => { cancelled = true; clearTimeout(timer1); clearTimeout(timer2); window.removeEventListener("mp:activity", onActivity); };
   }, []);
 
   return (

@@ -26,6 +26,21 @@ const ALL_TASKS = [
   "Try new features",
   "Watch ads",
   "Engage on Twitter / X",
+  "Like Instagram posts",
+  "Comment on TikTok videos",
+  "Join WhatsApp community",
+  "Test new payment features",
+  "Refer a merchant",
+  "Watch product tutorial",
+  "Complete profile setup",
+  "Verify phone number",
+  "Set transaction PIN",
+  "Invite via SMS",
+  "Add a beneficiary",
+  "Pay a bill challenge",
+  "Save ₦1,000 challenge",
+  "Send first transfer",
+  "Buy airtime challenge",
 ];
 
 const REWARDS = [500, 1000, 1500, 2000, 2500, 3000];
@@ -48,13 +63,15 @@ function seededRand(seed: string) {
 
 function getTodaysTasks() {
   const rand = seededRand(dayKey());
-  const tasksShuffled = [...ALL_TASKS].sort(() => rand() - 0.5).slice(0, 6);
+  const tasksShuffled = [...ALL_TASKS].sort(() => rand() - 0.5).slice(0, 12);
   return tasksShuffled.map((t, i) => ({
     id: `${dayKey()}-${i}`,
     title: t,
     reward: REWARDS[Math.floor(rand() * REWARDS.length)],
   }));
 }
+
+const LAST_NOTIFIED_DAY_KEY = "mp_earn_last_notified_day";
 
 const COMPLETED_KEY = "mp_earn_completed";
 
@@ -79,6 +96,19 @@ function EarnMore() {
       } else {
         setCompleted(map);
       }
+      // Notify once per day that new tasks have unlocked
+      const lastNotified = localStorage.getItem(LAST_NOTIFIED_DAY_KEY);
+      if (lastNotified !== dayKey()) {
+        localStorage.setItem(LAST_NOTIFIED_DAY_KEY, dayKey());
+        addNotification({
+          id: "earn-daily-" + dayKey(),
+          title: "New Earn More Tasks",
+          sub: "Fresh tasks are available — complete them to earn cash today.",
+          amount: 0,
+          status: "Successful",
+          dateISO: new Date().toISOString(),
+        });
+      }
     } catch { setCompleted({ _day: dayKey() }); }
   }, []);
 
@@ -89,7 +119,8 @@ function EarnMore() {
     localStorage.setItem(COMPLETED_KEY, JSON.stringify(next));
     const ref = genRef();
     const dateISO = new Date().toISOString();
-    addTx({ id: ref, kind: "earn", name: "Earn More Reward", sub: title, amount: reward, reference: ref, dateISO });
+    // hidden: true keeps Earn More rewards OUT of dashboard "Recent Transactions"
+    addTx({ id: ref, kind: "earn", name: "Earn More Reward", sub: title, amount: reward, reference: ref, dateISO, hidden: true });
     addNotification({ id: ref, title: "Earn More Reward", sub: title, amount: reward, status: "Successful", dateISO });
     setBalance(balance + reward);
   };
