@@ -45,7 +45,6 @@ const moreServices = [
   { slug: "flights", icon: Plane, label: "Flights", color: "#0EA5E9" },
   { slug: "shopping", icon: ShoppingBag, label: "Shopping", color: "#BE185D" },
   { slug: "earn-more", icon: Sparkles, label: "Earn More", color: "#16A34A" },
-  { slug: "withdraw", icon: Wallet, label: "Withdraw", color: "#0891B2" },
   { slug: "support", icon: Headphones, label: "Support", color: "#0EA5E9" },
 ];
 
