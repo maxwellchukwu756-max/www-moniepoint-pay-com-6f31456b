@@ -26,6 +26,21 @@ const ALL_TASKS = [
   "Try new features",
   "Watch ads",
   "Engage on Twitter / X",
+  "Like Instagram posts",
+  "Comment on TikTok videos",
+  "Join WhatsApp community",
+  "Test new payment features",
+  "Refer a merchant",
+  "Watch product tutorial",
+  "Complete profile setup",
+  "Verify phone number",
+  "Set transaction PIN",
+  "Invite via SMS",
+  "Add a beneficiary",
+  "Pay a bill challenge",
+  "Save ₦1,000 challenge",
+  "Send first transfer",
+  "Buy airtime challenge",
 ];
 
 const REWARDS = [500, 1000, 1500, 2000, 2500, 3000];
