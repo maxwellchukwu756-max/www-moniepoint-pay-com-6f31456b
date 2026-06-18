@@ -351,7 +351,9 @@ function ServicePage() {
         </div>
 
         <div className="flex-1 px-6 pt-5 pb-8">
-          {done ? (
+          {slug === "profile" ? (
+            <ProfilePanel />
+          ) : done ? (
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center justify-center text-center gap-3 pt-12">
               <div className="h-16 w-16 rounded-full brand-gradient flex items-center justify-center">
                 <Check className="h-8 w-8 text-white" strokeWidth={3} />
