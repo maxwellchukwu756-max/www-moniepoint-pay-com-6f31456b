@@ -63,13 +63,15 @@ function seededRand(seed: string) {
 
 function getTodaysTasks() {
   const rand = seededRand(dayKey());
-  const tasksShuffled = [...ALL_TASKS].sort(() => rand() - 0.5).slice(0, 6);
+  const tasksShuffled = [...ALL_TASKS].sort(() => rand() - 0.5).slice(0, 12);
   return tasksShuffled.map((t, i) => ({
     id: `${dayKey()}-${i}`,
     title: t,
     reward: REWARDS[Math.floor(rand() * REWARDS.length)],
   }));
 }
+
+const LAST_NOTIFIED_DAY_KEY = "mp_earn_last_notified_day";
 
 const COMPLETED_KEY = "mp_earn_completed";
 
