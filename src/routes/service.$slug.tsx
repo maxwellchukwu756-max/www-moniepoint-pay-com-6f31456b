@@ -1,13 +1,14 @@
 import { createFileRoute, Link, Navigate, useRouter } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { useState, type ComponentType } from "react";
+import { useEffect, useState, type ComponentType } from "react";
 import {
   ArrowLeft, Smartphone, Wifi, Receipt, Trophy, Zap, Tv,
   Banknote, PiggyBank, TrendingUp, Shield, Gift, Bitcoin,
   GraduationCap, Plane, ShoppingBag, Check, CreditCard, Wallet, User, Send,
+  Sparkles, Lock,
 } from "lucide-react";
 import { PhoneFrame } from "@/components/PhoneFrame";
-import { isValidMpayForTx, isGeneratedCode, formatNGN, useBalance, useTxs, genRef, addNotification } from "@/lib/store";
+import { isValidMpayForTx, isGeneratedCode, formatNGN, useBalance, useTxs, genRef, addNotification, useAccount } from "@/lib/store";
 
 type Svc = {
   title: string;
