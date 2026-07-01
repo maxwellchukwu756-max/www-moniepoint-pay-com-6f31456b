@@ -9,6 +9,9 @@ import {
 } from "lucide-react";
 import { PhoneFrame } from "@/components/PhoneFrame";
 import { isValidMpayForTx, isGeneratedCode, formatNGN, useBalance, useTxs, genRef, addNotification, useAccount } from "@/lib/store";
+import { getTodaysTasks, dayKey, COMPLETED_KEY, REQUIRED_DAILY_TASKS, type EarnTask } from "@/lib/earn";
+import { Progress } from "@/components/ui/progress";
+
 
 type Svc = {
   title: string;
@@ -150,35 +153,41 @@ export const Route = createFileRoute("/service/$slug")({
 });
 
 const GATED_SLUGS = new Set(["payments", "card", "wallet", "profile"]);
-const REQUIRED_DAILY_TASKS = 12;
 
-function todayDayKey() {
-  const d = new Date();
-  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-}
-
-function useDailyTasksComplete() {
-  const [state, setState] = useState({ done: 0, ready: false });
+function useDailyTasksState() {
+  const [state, setState] = useState<{ done: number; ready: boolean; map: Record<string, boolean> }>({ done: 0, ready: false, map: {} });
   useEffect(() => {
     const read = () => {
       try {
-        const raw = localStorage.getItem("mp_earn_completed");
+        const raw = localStorage.getItem(COMPLETED_KEY);
         const map = raw ? JSON.parse(raw) as Record<string, unknown> : {};
-        if (map._day !== todayDayKey()) { setState({ done: 0, ready: true }); return; }
-        const count = Object.entries(map).filter(([k, v]) => k !== "_day" && v === true).length;
-        setState({ done: count, ready: true });
-      } catch { setState({ done: 0, ready: true }); }
+        if (map._day !== dayKey()) { setState({ done: 0, ready: true, map: {} }); return; }
+        const cleaned: Record<string, boolean> = {};
+        let count = 0;
+        for (const [k, v] of Object.entries(map)) {
+          if (k === "_day") continue;
+          if (v === true) { cleaned[k] = true; count++; }
+        }
+        setState({ done: count, ready: true, map: cleaned });
+      } catch { setState({ done: 0, ready: true, map: {} }); }
     };
     read();
-    const onStorage = (e: StorageEvent) => { if (e.key === "mp_earn_completed") read(); };
+    const onStorage = (e: StorageEvent) => { if (e.key === COMPLETED_KEY) read(); };
+    const onLocal = () => read();
     window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+    window.addEventListener("mp:earn", onLocal);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("mp:earn", onLocal);
+    };
   }, []);
   return state;
 }
 
-function TaskGate({ slug, done }: { slug: string; done: number }) {
+function TaskGate({ slug, done, map }: { slug: string; done: number; map: Record<string, boolean> }) {
   const remaining = Math.max(0, REQUIRED_DAILY_TASKS - done);
+  const tasks: EarnTask[] = getTodaysTasks();
+  const pct = Math.min(100, Math.round((done / REQUIRED_DAILY_TASKS) * 100));
   return (
     <PhoneFrame>
       <div className="flex-1 flex flex-col bg-background text-foreground">
@@ -196,26 +205,45 @@ function TaskGate({ slug, done }: { slug: string; done: number }) {
             </div>
           </div>
         </div>
-        <div className="flex-1 px-6 py-6 flex flex-col items-center text-center gap-4">
-          <div className="h-16 w-16 rounded-2xl bg-brand-soft flex items-center justify-center">
-            <Sparkles className="h-8 w-8 text-primary" />
+        <div className="flex-1 px-6 py-6 flex flex-col gap-4 overflow-y-auto">
+          <div className="flex flex-col items-center text-center gap-2">
+            <div className="h-14 w-14 rounded-2xl bg-brand-soft flex items-center justify-center">
+              <Sparkles className="h-7 w-7 text-primary" />
+            </div>
+            <h2 className="text-base font-black">Complete your daily tasks</h2>
+            <p className="text-[11px] text-muted-foreground max-w-[280px]">
+              To access your <span className="font-bold capitalize">{slug}</span>, finish today's Earn More tasks first.
+            </p>
           </div>
-          <h2 className="text-lg font-black">Complete your daily tasks</h2>
-          <p className="text-xs text-muted-foreground max-w-[260px]">
-            To access your <span className="font-bold capitalize">{slug}</span>, finish today's Earn More tasks first.
-          </p>
           <div className="w-full rounded-2xl bg-card border border-border p-4" style={{ boxShadow: "var(--shadow-card)" }}>
             <div className="flex items-center justify-between text-xs font-bold">
               <span>Progress</span>
               <span className="text-primary">{done} / {REQUIRED_DAILY_TASKS}</span>
             </div>
-            <div className="mt-2 h-2 rounded-full bg-muted overflow-hidden">
-              <div className="h-full brand-gradient" style={{ width: `${Math.min(100, (done / REQUIRED_DAILY_TASKS) * 100)}%` }} />
-            </div>
-            <p className="mt-3 text-[11px] text-muted-foreground">
+            <Progress value={pct} className="mt-2 h-2" />
+            <p className="mt-2 text-[11px] text-muted-foreground">
               {remaining > 0 ? `${remaining} task${remaining === 1 ? "" : "s"} left to unlock` : "All tasks complete — reopen this page"}
             </p>
           </div>
+
+          <div className="w-full rounded-2xl bg-card border border-border p-3" style={{ boxShadow: "var(--shadow-card)" }}>
+            <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-2 px-1">Today's Checklist</p>
+            <ul className="space-y-1.5">
+              {tasks.map((t) => {
+                const isDone = !!map[t.id];
+                return (
+                  <li key={t.id} className={`flex items-center gap-2.5 px-2 py-2 rounded-xl ${isDone ? "bg-brand-soft" : "bg-muted"}`}>
+                    <div className={`h-5 w-5 rounded-full flex items-center justify-center shrink-0 ${isDone ? "brand-gradient" : "border border-border bg-background"}`}>
+                      {isDone && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
+                    </div>
+                    <span className={`text-[11px] font-semibold flex-1 min-w-0 truncate ${isDone ? "text-primary line-through" : ""}`}>{t.title}</span>
+                    <span className="text-[10px] font-black text-muted-foreground shrink-0">{formatNGN(t.reward)}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
           <Link to="/earn-more" className="w-full h-12 rounded-2xl text-sm font-bold flex items-center justify-center brand-gradient text-white">
             Go to Earn More
           </Link>
@@ -224,6 +252,7 @@ function TaskGate({ slug, done }: { slug: string; done: number }) {
     </PhoneFrame>
   );
 }
+
 
 function ProfilePanel() {
   const account = useAccount();
@@ -270,7 +299,7 @@ function ServicePage() {
   const { balance, setBalance } = useBalance();
   const { addTx } = useTxs();
   const svc = SERVICES[slug];
-  const taskState = useDailyTasksComplete();
+  const taskState = useDailyTasksState();
 
   const [values, setValues] = useState<Record<string, string>>({});
   const [mpayCode, setMpayCode] = useState("");
@@ -293,7 +322,7 @@ function ServicePage() {
 
   // Gate Payments / Cards / Wallet / Profile until today's Earn More tasks are done
   if (GATED_SLUGS.has(slug) && taskState.ready && taskState.done < REQUIRED_DAILY_TASKS) {
-    return <TaskGate slug={slug} done={taskState.done} />;
+    return <TaskGate slug={slug} done={taskState.done} map={taskState.map} />;
   }
 
   const Icon = svc.icon;

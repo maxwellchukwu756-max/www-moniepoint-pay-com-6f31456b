@@ -5,12 +5,14 @@ import {
   Send, Receipt, Smartphone, Wallet, Tv, Zap, Trophy, Wifi,
   IdCard, Banknote, PiggyBank, TrendingUp, Shield, Gift,
   Bitcoin, GraduationCap, Plane, ShoppingBag, Headphones,
-  Home, CreditCard, User, LayoutGrid, Sparkles,
+  Home, CreditCard, User, LayoutGrid, Sparkles, BellRing, X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PhoneFrame } from "@/components/PhoneFrame";
 import { useAccount, useBalance, useTxs, formatNGN, useNotifications } from "@/lib/store";
+import { enablePush, disablePush, pushOptedIn, pushPermission, firePush, dayKey } from "@/lib/earn";
 import janeSupport from "@/assets/jane-support.jpg.asset.json";
+
 
 
 export const Route = createFileRoute("/dashboard")({
@@ -197,6 +199,53 @@ function Dashboard() {
   const greet = useMemo(greeting, []);
   const firstName = account?.fullName?.split(" ")[0] ?? "there";
 
+  // Push notification opt-in state
+  const [pushOn, setPushOn] = useState(false);
+  const [pushSupported, setPushSupported] = useState(true);
+  const [pushDismissed, setPushDismissed] = useState(false);
+  const [pushBusy, setPushBusy] = useState(false);
+
+  useEffect(() => {
+    const perm = pushPermission();
+    if (perm === "unsupported") { setPushSupported(false); return; }
+    setPushOn(pushOptedIn() && perm === "granted");
+    setPushDismissed(localStorage.getItem("mp_push_banner_dismissed") === "1");
+  }, []);
+
+  // Once opted in, fire the daily "new tasks" push at most once per day
+  useEffect(() => {
+    if (!pushOn) return;
+    const key = "mp_push_daily_fired";
+    if (localStorage.getItem(key) !== dayKey()) {
+      localStorage.setItem(key, dayKey());
+      firePush("New Earn More Tasks", "Fresh daily tasks are ready — earn cash before midnight.");
+    }
+    // Remind if user hasn't completed today's tasks in 2 hours
+    const reminder = setTimeout(() => {
+      firePush("Don't miss today's tasks", "Complete your Earn More tasks to unlock Payments, Cards, Wallet & Profile.");
+    }, 2 * 60 * 60 * 1000);
+    return () => clearTimeout(reminder);
+  }, [pushOn]);
+
+  const handleEnablePush = async () => {
+    setPushBusy(true);
+    const ok = await enablePush();
+    setPushBusy(false);
+    setPushOn(ok);
+    if (ok) firePush("Notifications enabled", "You'll get alerts for daily Earn More tasks and reminders.");
+  };
+
+  const handleDisablePush = () => {
+    disablePush();
+    setPushOn(false);
+  };
+
+  const dismissBanner = () => {
+    setPushDismissed(true);
+    localStorage.setItem("mp_push_banner_dismissed", "1");
+  };
+
+
   return (
     <PhoneFrame>
       <LiveTicker />
@@ -222,6 +271,43 @@ function Dashboard() {
             )}
           </Link>
         </div>
+
+        {/* Push notification opt-in banner */}
+        {pushSupported && !pushDismissed && (
+          <AnimatePresence>
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="mx-6 mt-4 rounded-2xl border border-border bg-card p-3 flex items-center gap-3"
+              style={{ boxShadow: "var(--shadow-card)" }}
+            >
+              <div className="h-9 w-9 rounded-xl bg-brand-soft flex items-center justify-center shrink-0">
+                <BellRing className="h-4.5 w-4.5 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] font-black">{pushOn ? "Notifications on" : "Turn on push alerts"}</p>
+                <p className="text-[10px] text-muted-foreground truncate">
+                  {pushOn ? "You'll get daily Earn More task updates & reminders." : "Get daily Earn More tasks & completion reminders on this phone."}
+                </p>
+              </div>
+              {pushOn ? (
+                <button onClick={handleDisablePush} className="h-8 px-3 rounded-lg text-[10px] font-black border border-border">
+                  OFF
+                </button>
+              ) : (
+                <button disabled={pushBusy} onClick={handleEnablePush} className="h-8 px-3 rounded-lg text-[10px] font-black brand-gradient text-white disabled:opacity-60">
+                  {pushBusy ? "…" : "ENABLE"}
+                </button>
+              )}
+              <button onClick={dismissBanner} className="h-7 w-7 rounded-full flex items-center justify-center text-muted-foreground">
+                <X className="h-4 w-4" />
+              </button>
+            </motion.div>
+          </AnimatePresence>
+        )}
+
+
 
         {/* Balance Card */}
         <motion.div

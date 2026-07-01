@@ -178,23 +178,23 @@ function BuyMpay() {
 
             {step === "done" && (
               <motion.div key="done" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center pt-4">
-                <div className="mx-auto h-16 w-16 rounded-full brand-gradient flex items-center justify-center">
-                  <Check className="h-8 w-8 text-white" strokeWidth={3} />
+                <div className="mx-auto h-16 w-16 rounded-full flex items-center justify-center" style={{ background: "#FEE2E2" }}>
+                  <XCircle className="h-9 w-9" strokeWidth={2.5} style={{ color: "#DC2626" }} />
                 </div>
-                <h2 className="mt-3 text-lg font-black tracking-tight">Payment Successful</h2>
-                <p className="mt-1 text-[11px] text-muted-foreground">Your unique MPAY ID CODE has been generated.</p>
+                <h2 className="mt-3 text-lg font-black tracking-tight" style={{ color: "#DC2626" }}>Payment Not Confirmed</h2>
+                <p className="mt-2 text-xs font-semibold px-2 leading-relaxed">
+                  Dear User, kindly go back and follow the instructions carefully to make your payment and obtain your MPAY ID CODE.
+                </p>
 
-                <div className="mt-5 rounded-2xl bg-brand-soft border border-border p-4">
-                  <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground">Your MPAY ID CODE</p>
-                  <p className="mt-2 text-base font-black break-all select-all text-primary">{generatedCode}</p>
+                <div className="mt-4 rounded-2xl border p-3 text-left" style={{ background: "#FEF2F2", borderColor: "#FCA5A5" }}>
+                  <p className="text-[11px] font-semibold" style={{ color: "#991B1B" }}>
+                    We could not verify your payment to the provided Moniepoint MFB account. Please transfer the exact amount using your registered bank and try again.
+                  </p>
                 </div>
-
-                <p className="mt-4 text-xs font-semibold">Contact Customer Service Support Team for Activation.</p>
 
                 <div className="mt-5 space-y-2.5">
-                  <button onClick={copyCode} className="w-full h-12 rounded-2xl flex items-center justify-center gap-2 text-sm font-bold brand-gradient text-white">
-                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                    {copied ? "COPIED" : "COPY MPAY ID CODE"}
+                  <button onClick={() => setStep("payment")} className="w-full h-12 rounded-2xl text-sm font-bold brand-gradient text-white">
+                    GO BACK & TRY AGAIN
                   </button>
                   <button onClick={() => navigate({ to: "/support" })} className="w-full h-12 rounded-2xl flex items-center justify-center gap-2 text-sm font-bold border border-border">
                     <Headphones className="h-4 w-4" /> CONTACT SUPPORT
@@ -202,7 +202,6 @@ function BuyMpay() {
                   <a href={WHATSAPP_GROUP} target="_blank" rel="noreferrer" className="w-full h-12 rounded-2xl flex items-center justify-center gap-2 text-sm font-bold text-white" style={{ background: "#25D366" }}>
                     <MessageCircle className="h-4 w-4" /> WHATSAPP SUPPORT
                   </a>
-                  <a href={WHATSAPP_SUPPORT} target="_blank" rel="noreferrer" className="text-[11px] text-muted-foreground underline block mt-1">Or chat 1-on-1 on WhatsApp</a>
                 </div>
 
                 <button onClick={() => navigate({ to: "/dashboard" })} className="mt-5 w-full h-11 rounded-2xl text-sm font-bold border border-border">
@@ -210,6 +209,7 @@ function BuyMpay() {
                 </button>
               </motion.div>
             )}
+
           </AnimatePresence>
         </div>
       </div>

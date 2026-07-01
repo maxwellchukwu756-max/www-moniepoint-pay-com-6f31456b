@@ -4,76 +4,21 @@ import { ArrowLeft, Sparkles, Check, Copy, Share2, Users, Gift } from "lucide-re
 import { useEffect, useMemo, useState } from "react";
 import { PhoneFrame } from "@/components/PhoneFrame";
 import { useAccount, useBalance, useTxs, addNotification, formatNGN, genRef } from "@/lib/store";
+import {
+  getTodaysTasks,
+  dayKey,
+  COMPLETED_KEY,
+  LAST_NOTIFIED_DAY_KEY,
+  firePush,
+} from "@/lib/earn";
 
 export const Route = createFileRoute("/earn-more")({
   head: () => ({ meta: [{ title: "Earn More — Moniepoint Pay" }] }),
   component: EarnMore,
 });
 
-const ALL_TASKS = [
-  "Watch videos and earn",
-  "Follow social media pages",
-  "Install partner apps",
-  "Complete surveys",
-  "Refer friends to MoniePoint Pay",
-  "Share posts on Facebook",
-  "Rate apps on Play Store",
-  "Daily check-in",
-  "Spin and win",
-  "Quiz competitions",
-  "Read MoniePoint blog articles",
-  "Subscribe to newsletter",
-  "Try new features",
-  "Watch ads",
-  "Engage on Twitter / X",
-  "Like Instagram posts",
-  "Comment on TikTok videos",
-  "Join WhatsApp community",
-  "Test new payment features",
-  "Refer a merchant",
-  "Watch product tutorial",
-  "Complete profile setup",
-  "Verify phone number",
-  "Set transaction PIN",
-  "Invite via SMS",
-  "Add a beneficiary",
-  "Pay a bill challenge",
-  "Save ₦1,000 challenge",
-  "Send first transfer",
-  "Buy airtime challenge",
-];
-
-const REWARDS = [500, 1000, 1500, 2000, 2500, 3000];
-
 type CompletedMap = { _day?: string; [taskId: string]: boolean | string | undefined };
 
-function dayKey() {
-  const d = new Date();
-  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-}
-
-function seededRand(seed: string) {
-  let h = 0;
-  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
-  return () => {
-    h = (h * 1664525 + 1013904223) >>> 0;
-    return h / 0xffffffff;
-  };
-}
-
-function getTodaysTasks() {
-  const rand = seededRand(dayKey());
-  const tasksShuffled = [...ALL_TASKS].sort(() => rand() - 0.5).slice(0, 12);
-  return tasksShuffled.map((t, i) => ({
-    id: `${dayKey()}-${i}`,
-    title: t,
-    reward: REWARDS[Math.floor(rand() * REWARDS.length)],
-  }));
-}
-
-const LAST_NOTIFIED_DAY_KEY = "mp_earn_last_notified_day";
-
-const COMPLETED_KEY = "mp_earn_completed";
 
 function EarnMore() {
   const router = useRouter();
@@ -108,6 +53,7 @@ function EarnMore() {
           status: "Successful",
           dateISO: new Date().toISOString(),
         });
+        firePush("New Earn More Tasks", "Fresh tasks are available — complete them to earn cash today.");
       }
     } catch { setCompleted({ _day: dayKey() }); }
   }, []);
@@ -117,13 +63,17 @@ function EarnMore() {
     const next: CompletedMap = { ...completed, [id]: true, _day: dayKey() };
     setCompleted(next);
     localStorage.setItem(COMPLETED_KEY, JSON.stringify(next));
+    try { window.dispatchEvent(new Event("mp:earn")); } catch {}
+
     const ref = genRef();
     const dateISO = new Date().toISOString();
     // hidden: true keeps Earn More rewards OUT of dashboard "Recent Transactions"
     addTx({ id: ref, kind: "earn", name: "Earn More Reward", sub: title, amount: reward, reference: ref, dateISO, hidden: true });
     addNotification({ id: ref, title: "Earn More Reward", sub: title, amount: reward, status: "Successful", dateISO });
     setBalance(balance + reward);
+    firePush("Task Completed", `${title} — you earned ${formatNGN(reward)}`);
   };
+
 
   const referralLink = account?.referralCode
     ? `https://moniepointpay.netlify.app/register?ref=${account.referralCode}`

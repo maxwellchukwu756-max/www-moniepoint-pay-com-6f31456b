@@ -6,6 +6,15 @@
   NITRO_PRESET = "netlify"
   NODE_VERSION = "20"
 
+# Proxy Lovable CDN asset requests to the Lovable-hosted origin so that
+# .asset.json images served under /__l5e/* work on the Netlify deployment.
+# This MUST appear before the catch-all SPA redirect below.
+[[redirects]]
+  from = "/__l5e/*"
+  to = "https://www-moniepoint-pay-com.lovable.app/__l5e/:splat"
+  status = 200
+  force = true
+
 # Nitro's netlify preset emits its own functions + redirects into the
 # publish directory at build time, so no extra [[redirects]] block is needed.
 # SPA-style fallback is included as a safety net for any unmatched asset path.
@@ -14,6 +23,3 @@
   to = "/.netlify/functions/server"
   status = 200
   force = false
-
-# Sync trigger: edited to force a fresh Lovable preview rebuild after GitHub merge.
-
