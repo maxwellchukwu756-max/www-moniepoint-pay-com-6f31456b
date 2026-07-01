@@ -299,7 +299,7 @@ function ServicePage() {
   const { balance, setBalance } = useBalance();
   const { addTx } = useTxs();
   const svc = SERVICES[slug];
-  const taskState = useDailyTasksComplete();
+  const taskState = useDailyTasksState();
 
   const [values, setValues] = useState<Record<string, string>>({});
   const [mpayCode, setMpayCode] = useState("");
