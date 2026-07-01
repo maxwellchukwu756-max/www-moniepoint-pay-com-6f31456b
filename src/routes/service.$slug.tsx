@@ -322,7 +322,7 @@ function ServicePage() {
 
   // Gate Payments / Cards / Wallet / Profile until today's Earn More tasks are done
   if (GATED_SLUGS.has(slug) && taskState.ready && taskState.done < REQUIRED_DAILY_TASKS) {
-    return <TaskGate slug={slug} done={taskState.done} />;
+    return <TaskGate slug={slug} done={taskState.done} map={taskState.map} />;
   }
 
   const Icon = svc.icon;
