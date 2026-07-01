@@ -63,6 +63,8 @@ function EarnMore() {
     const next: CompletedMap = { ...completed, [id]: true, _day: dayKey() };
     setCompleted(next);
     localStorage.setItem(COMPLETED_KEY, JSON.stringify(next));
+    try { window.dispatchEvent(new Event("mp:earn")); } catch {}
+
     const ref = genRef();
     const dateISO = new Date().toISOString();
     // hidden: true keeps Earn More rewards OUT of dashboard "Recent Transactions"
