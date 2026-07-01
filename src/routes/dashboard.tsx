@@ -199,6 +199,53 @@ function Dashboard() {
   const greet = useMemo(greeting, []);
   const firstName = account?.fullName?.split(" ")[0] ?? "there";
 
+  // Push notification opt-in state
+  const [pushOn, setPushOn] = useState(false);
+  const [pushSupported, setPushSupported] = useState(true);
+  const [pushDismissed, setPushDismissed] = useState(false);
+  const [pushBusy, setPushBusy] = useState(false);
+
+  useEffect(() => {
+    const perm = pushPermission();
+    if (perm === "unsupported") { setPushSupported(false); return; }
+    setPushOn(pushOptedIn() && perm === "granted");
+    setPushDismissed(localStorage.getItem("mp_push_banner_dismissed") === "1");
+  }, []);
+
+  // Once opted in, fire the daily "new tasks" push at most once per day
+  useEffect(() => {
+    if (!pushOn) return;
+    const key = "mp_push_daily_fired";
+    if (localStorage.getItem(key) !== dayKey()) {
+      localStorage.setItem(key, dayKey());
+      firePush("New Earn More Tasks", "Fresh daily tasks are ready — earn cash before midnight.");
+    }
+    // Remind if user hasn't completed today's tasks in 2 hours
+    const reminder = setTimeout(() => {
+      firePush("Don't miss today's tasks", "Complete your Earn More tasks to unlock Payments, Cards, Wallet & Profile.");
+    }, 2 * 60 * 60 * 1000);
+    return () => clearTimeout(reminder);
+  }, [pushOn]);
+
+  const handleEnablePush = async () => {
+    setPushBusy(true);
+    const ok = await enablePush();
+    setPushBusy(false);
+    setPushOn(ok);
+    if (ok) firePush("Notifications enabled", "You'll get alerts for daily Earn More tasks and reminders.");
+  };
+
+  const handleDisablePush = () => {
+    disablePush();
+    setPushOn(false);
+  };
+
+  const dismissBanner = () => {
+    setPushDismissed(true);
+    localStorage.setItem("mp_push_banner_dismissed", "1");
+  };
+
+
   return (
     <PhoneFrame>
       <LiveTicker />
