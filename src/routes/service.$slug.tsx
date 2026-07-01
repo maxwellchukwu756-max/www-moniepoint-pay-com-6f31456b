@@ -9,6 +9,9 @@ import {
 } from "lucide-react";
 import { PhoneFrame } from "@/components/PhoneFrame";
 import { isValidMpayForTx, isGeneratedCode, formatNGN, useBalance, useTxs, genRef, addNotification, useAccount } from "@/lib/store";
+import { getTodaysTasks, dayKey, COMPLETED_KEY, REQUIRED_DAILY_TASKS, type EarnTask } from "@/lib/earn";
+import { Progress } from "@/components/ui/progress";
+
 
 type Svc = {
   title: string;
