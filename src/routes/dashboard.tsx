@@ -272,6 +272,43 @@ function Dashboard() {
           </Link>
         </div>
 
+        {/* Push notification opt-in banner */}
+        {pushSupported && !pushDismissed && (
+          <AnimatePresence>
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="mx-6 mt-4 rounded-2xl border border-border bg-card p-3 flex items-center gap-3"
+              style={{ boxShadow: "var(--shadow-card)" }}
+            >
+              <div className="h-9 w-9 rounded-xl bg-brand-soft flex items-center justify-center shrink-0">
+                <BellRing className="h-4.5 w-4.5 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] font-black">{pushOn ? "Notifications on" : "Turn on push alerts"}</p>
+                <p className="text-[10px] text-muted-foreground truncate">
+                  {pushOn ? "You'll get daily Earn More task updates & reminders." : "Get daily Earn More tasks & completion reminders on this phone."}
+                </p>
+              </div>
+              {pushOn ? (
+                <button onClick={handleDisablePush} className="h-8 px-3 rounded-lg text-[10px] font-black border border-border">
+                  OFF
+                </button>
+              ) : (
+                <button disabled={pushBusy} onClick={handleEnablePush} className="h-8 px-3 rounded-lg text-[10px] font-black brand-gradient text-white disabled:opacity-60">
+                  {pushBusy ? "…" : "ENABLE"}
+                </button>
+              )}
+              <button onClick={dismissBanner} className="h-7 w-7 rounded-full flex items-center justify-center text-muted-foreground">
+                <X className="h-4 w-4" />
+              </button>
+            </motion.div>
+          </AnimatePresence>
+        )}
+
+
+
         {/* Balance Card */}
         <motion.div
           initial={{ opacity: 0, y: 14 }}
