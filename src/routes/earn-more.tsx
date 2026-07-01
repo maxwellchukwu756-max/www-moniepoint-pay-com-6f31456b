@@ -53,6 +53,7 @@ function EarnMore() {
           status: "Successful",
           dateISO: new Date().toISOString(),
         });
+        firePush("New Earn More Tasks", "Fresh tasks are available — complete them to earn cash today.");
       }
     } catch { setCompleted({ _day: dayKey() }); }
   }, []);
@@ -68,7 +69,9 @@ function EarnMore() {
     addTx({ id: ref, kind: "earn", name: "Earn More Reward", sub: title, amount: reward, reference: ref, dateISO, hidden: true });
     addNotification({ id: ref, title: "Earn More Reward", sub: title, amount: reward, status: "Successful", dateISO });
     setBalance(balance + reward);
+    firePush("Task Completed", `${title} — you earned ${formatNGN(reward)}`);
   };
+
 
   const referralLink = account?.referralCode
     ? `https://moniepointpay.netlify.app/register?ref=${account.referralCode}`
