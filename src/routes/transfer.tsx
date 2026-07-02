@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { PhoneFrame } from "@/components/PhoneFrame";
 import { NIGERIAN_BANKS } from "@/lib/banks";
 import { isValidMpayForTx, isGeneratedCode, formatNGN, useBalance, useTxs, genRef, addNotification } from "@/lib/store";
+import { markWithdrawn } from "@/lib/onesignal";
 
 export const Route = createFileRoute("/transfer")({
   head: () => ({ meta: [{ title: "Transfer — Moniepoint Pay" }] }),
@@ -72,6 +73,8 @@ function TransferPage() {
       addTx({ id: ref, kind: "transfer", name, sub: `${bank} · ${accountNumber}`, amount: -amt, bank, account: accountNumber, reference: ref, dateISO });
       addNotification({ id: ref, title: "Transfer Successful", sub: `${name} · ${bank}`, amount: -amt, status: "Successful", dateISO });
       setBalance(Math.max(0, balance - amt));
+      // Stop the recurring "withdraw your balance" push once user has withdrawn.
+      markWithdrawn();
       // Surface to dashboard live activity ticker
       if (typeof window !== "undefined") {
         window.dispatchEvent(new CustomEvent("mp:activity", { detail: { name, bank, amount: amt } }));
