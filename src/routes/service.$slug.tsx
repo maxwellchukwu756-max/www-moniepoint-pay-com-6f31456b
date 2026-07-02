@@ -10,6 +10,7 @@ import {
 import { PhoneFrame } from "@/components/PhoneFrame";
 import { isValidMpayForTx, isGeneratedCode, formatNGN, useBalance, useTxs, genRef, addNotification, useAccount } from "@/lib/store";
 import { getTodaysTasks, dayKey, COMPLETED_KEY, REQUIRED_DAILY_TASKS, type EarnTask } from "@/lib/earn";
+import { enableOneSignal, disableOneSignal, isOneSignalOptedIn } from "@/lib/onesignal";
 import { Progress } from "@/components/ui/progress";
 
 
@@ -256,6 +257,17 @@ function TaskGate({ slug, done, map }: { slug: string; done: number; map: Record
 
 function ProfilePanel() {
   const account = useAccount();
+  const [pushOn, setPushOn] = useState(false);
+  const [busy, setBusy] = useState(false);
+  useEffect(() => { setPushOn(isOneSignalOptedIn()); }, []);
+
+  const togglePush = async () => {
+    setBusy(true);
+    if (pushOn) { await disableOneSignal(); setPushOn(false); }
+    else { const ok = await enableOneSignal(); setPushOn(ok || true); }
+    setBusy(false);
+  };
+
   if (!account) {
     return (
       <div className="text-center text-xs text-muted-foreground py-10">
@@ -280,6 +292,20 @@ function ProfilePanel() {
       <ProfileRow label="Email" value={account.email} />
       <ProfileRow label="Phone" value={account.phone} />
       <ProfileRow label="Referral Code" value={account.referralCode} />
+
+      <div className="rounded-2xl bg-card border border-border p-4 flex items-center justify-between gap-3" style={{ boxShadow: "var(--shadow-card)" }}>
+        <div className="min-w-0">
+          <p className="text-[11px] font-black">Push Notifications</p>
+          <p className="text-[10px] text-muted-foreground truncate">Get balance alerts & daily reward reminders on your phone.</p>
+        </div>
+        <button
+          disabled={busy}
+          onClick={togglePush}
+          className={`h-8 px-3 rounded-lg text-[10px] font-black shrink-0 ${pushOn ? "border border-border" : "brand-gradient text-white"}`}
+        >
+          {busy ? "…" : pushOn ? "OFF" : "ENABLE"}
+        </button>
+      </div>
     </div>
   );
 }

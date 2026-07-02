@@ -11,6 +11,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { PhoneFrame } from "@/components/PhoneFrame";
 import { useAccount, useBalance, useTxs, formatNGN, useNotifications } from "@/lib/store";
 import { enablePush, disablePush, pushOptedIn, pushPermission, firePush, dayKey } from "@/lib/earn";
+import { enableOneSignal, disableOneSignal } from "@/lib/onesignal";
 import janeSupport from "@/assets/jane-support.jpg.asset.json";
 
 
@@ -230,13 +231,16 @@ function Dashboard() {
   const handleEnablePush = async () => {
     setPushBusy(true);
     const ok = await enablePush();
+    // Also opt into OneSignal so notifications work when app is closed / phone locked.
+    await enableOneSignal();
     setPushBusy(false);
     setPushOn(ok);
-    if (ok) firePush("Notifications enabled", "You'll get alerts for daily Earn More tasks and reminders.");
+    if (ok) firePush("Notifications enabled", "You'll get alerts for daily Earn More tasks, balance reminders, and rewards.");
   };
 
   const handleDisablePush = () => {
     disablePush();
+    disableOneSignal();
     setPushOn(false);
   };
 
