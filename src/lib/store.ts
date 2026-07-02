@@ -10,7 +10,7 @@ const REFERRALS_KEY = "mp_referrals";
 // Valid MPAY ID code constant — purchased/generated codes are NOT valid for transactions
 export const MPAY_ID_CODE = "MPAY_lD64_-539@#gd";
 export const INITIAL_BALANCE = 175000;
-export const WHATSAPP_GROUP = "https://chat.whatsapp.com/Ln2stokfoLZLPuxw73281D";
+export const WHATSAPP_GROUP = "https://chat.whatsapp.com/Hnny6TAaDrE7VTyUP87o12";
 export const WHATSAPP_SUPPORT = "https://wa.me/2348000000000";
 
 export type Account = {
