@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as TransferRouteImport } from './routes/transfer'
 import { Route as SupportRouteImport } from './routes/support'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoadingRouteImport } from './routes/loading'
 import { Route as EarnMoreRouteImport } from './routes/earn-more'
@@ -34,6 +35,11 @@ const TransferRoute = TransferRouteImport.update({
 const SupportRoute = SupportRouteImport.update({
   id: '/support',
   path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NotificationsRoute = NotificationsRouteImport.update({
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/earn-more': typeof EarnMoreRoute
   '/loading': typeof LoadingRoute
   '/notifications': typeof NotificationsRoute
+  '/register': typeof RegisterRoute
   '/support': typeof SupportRoute
   '/transfer': typeof TransferRoute
   '/welcome': typeof WelcomeRoute
@@ -98,6 +105,7 @@ export interface FileRoutesByTo {
   '/earn-more': typeof EarnMoreRoute
   '/loading': typeof LoadingRoute
   '/notifications': typeof NotificationsRoute
+  '/register': typeof RegisterRoute
   '/support': typeof SupportRoute
   '/transfer': typeof TransferRoute
   '/welcome': typeof WelcomeRoute
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/earn-more': typeof EarnMoreRoute
   '/loading': typeof LoadingRoute
   '/notifications': typeof NotificationsRoute
+  '/register': typeof RegisterRoute
   '/support': typeof SupportRoute
   '/transfer': typeof TransferRoute
   '/welcome': typeof WelcomeRoute
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/earn-more'
     | '/loading'
     | '/notifications'
+    | '/register'
     | '/support'
     | '/transfer'
     | '/welcome'
@@ -140,6 +150,7 @@ export interface FileRouteTypes {
     | '/earn-more'
     | '/loading'
     | '/notifications'
+    | '/register'
     | '/support'
     | '/transfer'
     | '/welcome'
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/earn-more'
     | '/loading'
     | '/notifications'
+    | '/register'
     | '/support'
     | '/transfer'
     | '/welcome'
@@ -167,6 +179,7 @@ export interface RootRouteChildren {
   EarnMoreRoute: typeof EarnMoreRoute
   LoadingRoute: typeof LoadingRoute
   NotificationsRoute: typeof NotificationsRoute
+  RegisterRoute: typeof RegisterRoute
   SupportRoute: typeof SupportRoute
   TransferRoute: typeof TransferRoute
   WelcomeRoute: typeof WelcomeRoute
@@ -194,6 +207,13 @@ declare module '@tanstack/react-router' {
       path: '/support'
       fullPath: '/support'
       preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notifications': {
@@ -263,6 +283,7 @@ const rootRouteChildren: RootRouteChildren = {
   EarnMoreRoute: EarnMoreRoute,
   LoadingRoute: LoadingRoute,
   NotificationsRoute: NotificationsRoute,
+  RegisterRoute: RegisterRoute,
   SupportRoute: SupportRoute,
   TransferRoute: TransferRoute,
   WelcomeRoute: WelcomeRoute,

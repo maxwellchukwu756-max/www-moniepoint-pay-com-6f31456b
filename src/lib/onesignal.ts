@@ -20,7 +20,7 @@
 // the recurring campaign.
 
 // TODO: Replace this placeholder with your real OneSignal App ID.
-export const ONESIGNAL_APP_ID = "YOUR_ONESIGNAL_APP_ID";
+export const ONESIGNAL_APP_ID = "f089219b-9dc5-4b5e-9215-c91eb797d50e";
 
 const OPT_KEY = "mp_onesignal_opt";
 
@@ -37,10 +37,7 @@ let initialized = false;
 export function initOneSignal() {
   if (typeof window === "undefined") return;
   if (initialized) return;
-  if (!ONESIGNAL_APP_ID || ONESIGNAL_APP_ID === "YOUR_ONESIGNAL_APP_ID") {
-    // Not configured yet — skip to avoid SDK errors.
-    return;
-  }
+  if (!ONESIGNAL_APP_ID) return;
   initialized = true;
 
   // Inject SDK script
@@ -95,8 +92,7 @@ function withOneSignal(fn: (OneSignal: any) => void | Promise<void>) {
 export async function enableOneSignal(): Promise<boolean> {
   return new Promise((resolve) => {
     if (typeof window === "undefined") return resolve(false);
-    if (!ONESIGNAL_APP_ID || ONESIGNAL_APP_ID === "YOUR_ONESIGNAL_APP_ID") {
-      // Fallback: still respect user intent, so the toggle reflects a "try again once configured" state.
+    if (!ONESIGNAL_APP_ID) {
       localStorage.setItem(OPT_KEY, "1");
       return resolve(false);
     }
