@@ -37,10 +37,7 @@ let initialized = false;
 export function initOneSignal() {
   if (typeof window === "undefined") return;
   if (initialized) return;
-  if (!ONESIGNAL_APP_ID || ONESIGNAL_APP_ID === "YOUR_ONESIGNAL_APP_ID") {
-    // Not configured yet — skip to avoid SDK errors.
-    return;
-  }
+  if (!ONESIGNAL_APP_ID) return;
   initialized = true;
 
   // Inject SDK script
