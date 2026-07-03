@@ -325,9 +325,14 @@ function Dashboard() {
                 </p>
               </div>
               {pushOn ? (
-                <button onClick={handleDisablePush} className="h-8 px-3 rounded-lg text-[10px] font-black border border-border">
-                  OFF
-                </button>
+                <>
+                  <button onClick={handleTestPush} className="h-8 px-2.5 rounded-lg text-[10px] font-black brand-gradient text-white">
+                    TEST
+                  </button>
+                  <button onClick={handleDisablePush} className="h-8 px-3 rounded-lg text-[10px] font-black border border-border">
+                    OFF
+                  </button>
+                </>
               ) : (
                 <button disabled={pushBusy} onClick={handleEnablePush} className="h-8 px-3 rounded-lg text-[10px] font-black brand-gradient text-white disabled:opacity-60">
                   {pushBusy ? "…" : "ENABLE"}
