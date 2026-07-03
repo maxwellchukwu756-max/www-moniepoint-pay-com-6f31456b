@@ -20,7 +20,7 @@
 // the recurring campaign.
 
 // TODO: Replace this placeholder with your real OneSignal App ID.
-export const ONESIGNAL_APP_ID = "YOUR_ONESIGNAL_APP_ID";
+export const ONESIGNAL_APP_ID = "f089219b-9dc5-4b5e-9215-c91eb797d50e";
 
 const OPT_KEY = "mp_onesignal_opt";
 
