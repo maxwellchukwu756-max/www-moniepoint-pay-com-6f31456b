@@ -92,8 +92,7 @@ function withOneSignal(fn: (OneSignal: any) => void | Promise<void>) {
 export async function enableOneSignal(): Promise<boolean> {
   return new Promise((resolve) => {
     if (typeof window === "undefined") return resolve(false);
-    if (!ONESIGNAL_APP_ID || ONESIGNAL_APP_ID === "YOUR_ONESIGNAL_APP_ID") {
-      // Fallback: still respect user intent, so the toggle reflects a "try again once configured" state.
+    if (!ONESIGNAL_APP_ID) {
       localStorage.setItem(OPT_KEY, "1");
       return resolve(false);
     }
