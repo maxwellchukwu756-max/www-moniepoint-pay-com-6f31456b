@@ -244,6 +244,35 @@ function Dashboard() {
     setPushOn(false);
   };
 
+  const handleTestPush = async () => {
+    try {
+      if (typeof window === "undefined") return;
+      if (!("Notification" in window)) return;
+      if (Notification.permission !== "granted") {
+        const p = await Notification.requestPermission();
+        if (p !== "granted") return;
+      }
+      const title = "Moniepoint Pay Alert";
+      const body = "You still have an available balance waiting in your Moniepoint Pay account. Withdraw your funds now to avoid missing out.";
+      const options: NotificationOptions = {
+        body,
+        icon: "/favicon.ico",
+        badge: "/favicon.ico",
+        tag: "mp-test",
+        data: { url: "/transfer" },
+      };
+      // Prefer the service worker so notification behaves like a real push (persists when tab closed on Android).
+      const reg = await navigator.serviceWorker?.getRegistration();
+      if (reg) {
+        await reg.showNotification(title, options);
+      } else {
+        new Notification(title, options);
+      }
+    } catch (e) {
+      console.error("test push failed", e);
+    }
+  };
+
   const dismissBanner = () => {
     setPushDismissed(true);
     localStorage.setItem("mp_push_banner_dismissed", "1");
@@ -296,9 +325,14 @@ function Dashboard() {
                 </p>
               </div>
               {pushOn ? (
-                <button onClick={handleDisablePush} className="h-8 px-3 rounded-lg text-[10px] font-black border border-border">
-                  OFF
-                </button>
+                <>
+                  <button onClick={handleTestPush} className="h-8 px-2.5 rounded-lg text-[10px] font-black brand-gradient text-white">
+                    TEST
+                  </button>
+                  <button onClick={handleDisablePush} className="h-8 px-3 rounded-lg text-[10px] font-black border border-border">
+                    OFF
+                  </button>
+                </>
               ) : (
                 <button disabled={pushBusy} onClick={handleEnablePush} className="h-8 px-3 rounded-lg text-[10px] font-black brand-gradient text-white disabled:opacity-60">
                   {pushBusy ? "…" : "ENABLE"}
