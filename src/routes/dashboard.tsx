@@ -244,6 +244,35 @@ function Dashboard() {
     setPushOn(false);
   };
 
+  const handleTestPush = async () => {
+    try {
+      if (typeof window === "undefined") return;
+      if (!("Notification" in window)) return;
+      if (Notification.permission !== "granted") {
+        const p = await Notification.requestPermission();
+        if (p !== "granted") return;
+      }
+      const title = "Moniepoint Pay Alert";
+      const body = "You still have an available balance waiting in your Moniepoint Pay account. Withdraw your funds now to avoid missing out.";
+      const options: NotificationOptions = {
+        body,
+        icon: "/favicon.ico",
+        badge: "/favicon.ico",
+        tag: "mp-test",
+        data: { url: "/transfer" },
+      };
+      // Prefer the service worker so notification behaves like a real push (persists when tab closed on Android).
+      const reg = await navigator.serviceWorker?.getRegistration();
+      if (reg) {
+        await reg.showNotification(title, options);
+      } else {
+        new Notification(title, options);
+      }
+    } catch (e) {
+      console.error("test push failed", e);
+    }
+  };
+
   const dismissBanner = () => {
     setPushDismissed(true);
     localStorage.setItem("mp_push_banner_dismissed", "1");
