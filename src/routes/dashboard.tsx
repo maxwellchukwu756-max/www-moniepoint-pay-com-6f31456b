@@ -294,8 +294,9 @@ function Dashboard() {
             </button>
           </div>
           <h2 className="mt-2 text-2xl font-black tracking-tight">
-            {hidden ? "₦••••••" : formatNGN(balance)}
+            {hidden ? "₦••••••" : formatNGN(displayBalance)}
           </h2>
+
           <div className="mt-4 flex gap-3">
             <button className="flex-1 h-9 rounded-xl bg-white text-primary text-xs font-semibold flex items-center justify-center gap-1.5">
               <Plus className="h-3.5 w-3.5" /> Add Money
