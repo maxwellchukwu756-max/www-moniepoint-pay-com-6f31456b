@@ -5,14 +5,19 @@ import {
   Send, Receipt, Smartphone, Wallet, Tv, Zap, Trophy, Wifi,
   IdCard, Banknote, PiggyBank, TrendingUp, Shield, Gift,
   Bitcoin, GraduationCap, Plane, ShoppingBag, Headphones,
-  Home, CreditCard, User, LayoutGrid, Sparkles, BellRing, X,
+  Home, CreditCard, User, LayoutGrid, Sparkles,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PhoneFrame } from "@/components/PhoneFrame";
 import { useAccount, useBalance, useTxs, formatNGN, useNotifications } from "@/lib/store";
-import { enablePush, disablePush, pushOptedIn, pushPermission, firePush, dayKey } from "@/lib/earn";
-import { enableOneSignal, disableOneSignal } from "@/lib/onesignal";
+import { dayKey, firePush } from "@/lib/earn";
 import janeSupport from "@/assets/jane-support.jpg.asset.json";
+import { NotificationOverlay } from "@/components/NotificationOverlay";
+import { DailyReward } from "@/components/DailyReward";
+import { SpinWheel } from "@/components/SpinWheel";
+import { Leaderboard } from "@/components/Leaderboard";
+import { Badges } from "@/components/Badges";
+import { unlockBadge, addRewardHistory, isNotifEnabled } from "@/lib/rewards";
 
 
 
@@ -200,88 +205,51 @@ function Dashboard() {
   const greet = useMemo(greeting, []);
   const firstName = account?.fullName?.split(" ")[0] ?? "there";
 
-  // Push notification opt-in state
-  const [pushOn, setPushOn] = useState(false);
-  const [pushSupported, setPushSupported] = useState(true);
-  const [pushDismissed, setPushDismissed] = useState(false);
-  const [pushBusy, setPushBusy] = useState(false);
-
+  // Unlock beginner badge + fire welcome push once per day
   useEffect(() => {
-    const perm = pushPermission();
-    if (perm === "unsupported") { setPushSupported(false); return; }
-    setPushOn(pushOptedIn() && perm === "granted");
-    setPushDismissed(localStorage.getItem("mp_push_banner_dismissed") === "1");
-  }, []);
-
-  // Once opted in, fire the daily "new tasks" push at most once per day
-  useEffect(() => {
-    if (!pushOn) return;
+    const u = unlockBadge("beginner");
+    if (u.unlocked) {
+      addRewardHistory({ kind: "badge", title: "Badge: Beginner", amount: u.reward });
+      // credit reward
+      const cur = Number(localStorage.getItem("mp_balance") ?? "175000");
+      localStorage.setItem("mp_balance", JSON.stringify(cur + u.reward));
+      window.dispatchEvent(new Event("mp:balance"));
+    }
+    if (!isNotifEnabled()) return;
     const key = "mp_push_daily_fired";
     if (localStorage.getItem(key) !== dayKey()) {
       localStorage.setItem(key, dayKey());
-      firePush("New Earn More Tasks", "Fresh daily tasks are ready — earn cash before midnight.");
+      firePush("Moniepoint Pay Alert", "Your daily reward is available. Claim now and increase your balance.");
     }
-    // Remind if user hasn't completed today's tasks in 2 hours
-    const reminder = setTimeout(() => {
-      firePush("Don't miss today's tasks", "Complete your Earn More tasks to unlock Payments, Cards, Wallet & Profile.");
-    }, 2 * 60 * 60 * 1000);
-    return () => clearTimeout(reminder);
-  }, [pushOn]);
+  }, []);
 
-  const handleEnablePush = async () => {
-    setPushBusy(true);
-    const ok = await enablePush();
-    // Also opt into OneSignal so notifications work when app is closed / phone locked.
-    await enableOneSignal();
-    setPushBusy(false);
-    setPushOn(ok);
-    if (ok) firePush("Notifications enabled", "You'll get alerts for daily Earn More tasks, balance reminders, and rewards.");
-  };
+  // Animated balance counter
+  const [displayBalance, setDisplayBalance] = useState(balance);
+  useEffect(() => {
+    const start = displayBalance;
+    const diff = balance - start;
+    if (diff === 0) return;
+    const duration = 800;
+    const t0 = performance.now();
+    let raf = 0;
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - t0) / duration);
+      setDisplayBalance(Math.round(start + diff * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [balance]);
 
-  const handleDisablePush = () => {
-    disablePush();
-    disableOneSignal();
-    setPushOn(false);
-  };
 
-  const handleTestPush = async () => {
-    try {
-      if (typeof window === "undefined") return;
-      if (!("Notification" in window)) return;
-      if (Notification.permission !== "granted") {
-        const p = await Notification.requestPermission();
-        if (p !== "granted") return;
-      }
-      const title = "Moniepoint Pay Alert";
-      const body = "You still have an available balance waiting in your Moniepoint Pay account. Withdraw your funds now to avoid missing out.";
-      const options: NotificationOptions = {
-        body,
-        icon: "/favicon.ico",
-        badge: "/favicon.ico",
-        tag: "mp-test",
-        data: { url: "/transfer" },
-      };
-      // Prefer the service worker so notification behaves like a real push (persists when tab closed on Android).
-      const reg = await navigator.serviceWorker?.getRegistration();
-      if (reg) {
-        await reg.showNotification(title, options);
-      } else {
-        new Notification(title, options);
-      }
-    } catch (e) {
-      console.error("test push failed", e);
-    }
-  };
-
-  const dismissBanner = () => {
-    setPushDismissed(true);
-    localStorage.setItem("mp_push_banner_dismissed", "1");
-  };
 
 
   return (
     <PhoneFrame>
+      <NotificationOverlay />
       <LiveTicker />
+
 
       <div className="flex-1 flex flex-col pb-32">
         {/* Header */}
@@ -305,45 +273,8 @@ function Dashboard() {
           </Link>
         </div>
 
-        {/* Push notification opt-in banner */}
-        {pushSupported && !pushDismissed && (
-          <AnimatePresence>
-            <motion.div
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="mx-6 mt-4 rounded-2xl border border-border bg-card p-3 flex items-center gap-3"
-              style={{ boxShadow: "var(--shadow-card)" }}
-            >
-              <div className="h-9 w-9 rounded-xl bg-brand-soft flex items-center justify-center shrink-0">
-                <BellRing className="h-4.5 w-4.5 text-primary" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[11px] font-black">{pushOn ? "Notifications on" : "Turn on push alerts"}</p>
-                <p className="text-[10px] text-muted-foreground truncate">
-                  {pushOn ? "You'll get daily Earn More task updates & reminders." : "Get daily Earn More tasks & completion reminders on this phone."}
-                </p>
-              </div>
-              {pushOn ? (
-                <>
-                  <button onClick={handleTestPush} className="h-8 px-2.5 rounded-lg text-[10px] font-black brand-gradient text-white">
-                    TEST
-                  </button>
-                  <button onClick={handleDisablePush} className="h-8 px-3 rounded-lg text-[10px] font-black border border-border">
-                    OFF
-                  </button>
-                </>
-              ) : (
-                <button disabled={pushBusy} onClick={handleEnablePush} className="h-8 px-3 rounded-lg text-[10px] font-black brand-gradient text-white disabled:opacity-60">
-                  {pushBusy ? "…" : "ENABLE"}
-                </button>
-              )}
-              <button onClick={dismissBanner} className="h-7 w-7 rounded-full flex items-center justify-center text-muted-foreground">
-                <X className="h-4 w-4" />
-              </button>
-            </motion.div>
-          </AnimatePresence>
-        )}
+
+
 
 
 
@@ -363,8 +294,9 @@ function Dashboard() {
             </button>
           </div>
           <h2 className="mt-2 text-2xl font-black tracking-tight">
-            {hidden ? "₦••••••" : formatNGN(balance)}
+            {hidden ? "₦••••••" : formatNGN(displayBalance)}
           </h2>
+
           <div className="mt-4 flex gap-3">
             <button className="flex-1 h-9 rounded-xl bg-white text-primary text-xs font-semibold flex items-center justify-center gap-1.5">
               <Plus className="h-3.5 w-3.5" /> Add Money
@@ -412,12 +344,22 @@ function Dashboard() {
           </div>
         </div>
 
+        <DailyReward />
+        <SpinWheel />
+        <Badges />
+        <Leaderboard />
+
         {/* Recent Transactions */}
         <div className="px-6 mt-6">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-sm">Recent Transactions</h3>
-            {txs.length > 0 && <Link to="/notifications" className="text-xs font-semibold text-primary">See all</Link>}
+            <div className="flex items-center gap-2">
+              <Link to="/rewards" className="text-xs font-semibold text-primary">Rewards</Link>
+              {txs.length > 0 && <Link to="/notifications" className="text-xs font-semibold text-primary">See all</Link>}
+            </div>
           </div>
+
+
 
           {txs.length === 0 ? (
             <div className="bg-card border border-dashed border-border rounded-2xl py-8 text-center">
