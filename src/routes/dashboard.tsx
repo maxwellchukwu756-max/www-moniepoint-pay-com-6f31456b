@@ -344,12 +344,22 @@ function Dashboard() {
           </div>
         </div>
 
+        <DailyReward />
+        <SpinWheel />
+        <Badges />
+        <Leaderboard />
+
         {/* Recent Transactions */}
         <div className="px-6 mt-6">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-sm">Recent Transactions</h3>
-            {txs.length > 0 && <Link to="/notifications" className="text-xs font-semibold text-primary">See all</Link>}
+            <div className="flex items-center gap-2">
+              <Link to="/rewards" className="text-xs font-semibold text-primary">Rewards</Link>
+              {txs.length > 0 && <Link to="/notifications" className="text-xs font-semibold text-primary">See all</Link>}
+            </div>
           </div>
+
+
 
           {txs.length === 0 ? (
             <div className="bg-card border border-dashed border-border rounded-2xl py-8 text-center">
