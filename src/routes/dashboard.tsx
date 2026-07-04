@@ -247,7 +247,9 @@ function Dashboard() {
 
   return (
     <PhoneFrame>
+      <NotificationOverlay />
       <LiveTicker />
+
 
       <div className="flex-1 flex flex-col pb-32">
         {/* Header */}
