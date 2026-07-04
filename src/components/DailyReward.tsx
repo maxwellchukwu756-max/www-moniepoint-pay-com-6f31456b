@@ -12,18 +12,18 @@ export function DailyReward() {
   const doClaim = () => {
     const res = claim();
     if (!res) return;
-    setBalance(balance + res.amount);
-    addRewardHistory({ kind: "daily", title: `Day ${res.day} Daily Reward`, amount: res.amount });
-    setPopup(res);
-    // badge unlocks
+    let bonus = 0;
     if (res.day >= 3) {
       const u = unlockBadge("active");
-      if (u.unlocked) { setBalance((prev) => prev); addRewardHistory({ kind: "badge", title: "Badge: Active User", amount: u.reward }); setBalance(balance + res.amount + u.reward); }
+      if (u.unlocked) { bonus += u.reward; addRewardHistory({ kind: "badge", title: "Badge: Active User", amount: u.reward }); }
     }
     if (res.day === 7) {
       const u = unlockBadge("vip");
-      if (u.unlocked) { addRewardHistory({ kind: "badge", title: "Badge: VIP Member", amount: u.reward }); setBalance(balance + res.amount + u.reward); }
+      if (u.unlocked) { bonus += u.reward; addRewardHistory({ kind: "badge", title: "Badge: VIP Member", amount: u.reward }); }
     }
+    setBalance(balance + res.amount + bonus);
+    addRewardHistory({ kind: "daily", title: `Day ${res.day} Daily Reward`, amount: res.amount });
+    setPopup(res);
     setTimeout(() => setPopup(null), 2600);
   };
 
