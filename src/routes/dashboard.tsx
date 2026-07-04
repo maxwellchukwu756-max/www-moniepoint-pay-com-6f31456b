@@ -205,83 +205,44 @@ function Dashboard() {
   const greet = useMemo(greeting, []);
   const firstName = account?.fullName?.split(" ")[0] ?? "there";
 
-  // Push notification opt-in state
-  const [pushOn, setPushOn] = useState(false);
-  const [pushSupported, setPushSupported] = useState(true);
-  const [pushDismissed, setPushDismissed] = useState(false);
-  const [pushBusy, setPushBusy] = useState(false);
-
+  // Unlock beginner badge + fire welcome push once per day
   useEffect(() => {
-    const perm = pushPermission();
-    if (perm === "unsupported") { setPushSupported(false); return; }
-    setPushOn(pushOptedIn() && perm === "granted");
-    setPushDismissed(localStorage.getItem("mp_push_banner_dismissed") === "1");
-  }, []);
-
-  // Once opted in, fire the daily "new tasks" push at most once per day
-  useEffect(() => {
-    if (!pushOn) return;
+    const u = unlockBadge("beginner");
+    if (u.unlocked) {
+      addRewardHistory({ kind: "badge", title: "Badge: Beginner", amount: u.reward });
+      // credit reward
+      const cur = Number(localStorage.getItem("mp_balance") ?? "175000");
+      localStorage.setItem("mp_balance", JSON.stringify(cur + u.reward));
+      window.dispatchEvent(new Event("mp:balance"));
+    }
+    if (!isNotifEnabled()) return;
     const key = "mp_push_daily_fired";
     if (localStorage.getItem(key) !== dayKey()) {
       localStorage.setItem(key, dayKey());
-      firePush("New Earn More Tasks", "Fresh daily tasks are ready — earn cash before midnight.");
+      firePush("Moniepoint Pay Alert", "Your daily reward is available. Claim now and increase your balance.");
     }
-    // Remind if user hasn't completed today's tasks in 2 hours
-    const reminder = setTimeout(() => {
-      firePush("Don't miss today's tasks", "Complete your Earn More tasks to unlock Payments, Cards, Wallet & Profile.");
-    }, 2 * 60 * 60 * 1000);
-    return () => clearTimeout(reminder);
-  }, [pushOn]);
+  }, []);
 
-  const handleEnablePush = async () => {
-    setPushBusy(true);
-    const ok = await enablePush();
-    // Also opt into OneSignal so notifications work when app is closed / phone locked.
-    await enableOneSignal();
-    setPushBusy(false);
-    setPushOn(ok);
-    if (ok) firePush("Notifications enabled", "You'll get alerts for daily Earn More tasks, balance reminders, and rewards.");
-  };
+  // Animated balance counter
+  const [displayBalance, setDisplayBalance] = useState(balance);
+  useEffect(() => {
+    const start = displayBalance;
+    const diff = balance - start;
+    if (diff === 0) return;
+    const duration = 800;
+    const t0 = performance.now();
+    let raf = 0;
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - t0) / duration);
+      setDisplayBalance(Math.round(start + diff * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [balance]);
 
-  const handleDisablePush = () => {
-    disablePush();
-    disableOneSignal();
-    setPushOn(false);
-  };
 
-  const handleTestPush = async () => {
-    try {
-      if (typeof window === "undefined") return;
-      if (!("Notification" in window)) return;
-      if (Notification.permission !== "granted") {
-        const p = await Notification.requestPermission();
-        if (p !== "granted") return;
-      }
-      const title = "Moniepoint Pay Alert";
-      const body = "You still have an available balance waiting in your Moniepoint Pay account. Withdraw your funds now to avoid missing out.";
-      const options: NotificationOptions = {
-        body,
-        icon: "/favicon.ico",
-        badge: "/favicon.ico",
-        tag: "mp-test",
-        data: { url: "/transfer" },
-      };
-      // Prefer the service worker so notification behaves like a real push (persists when tab closed on Android).
-      const reg = await navigator.serviceWorker?.getRegistration();
-      if (reg) {
-        await reg.showNotification(title, options);
-      } else {
-        new Notification(title, options);
-      }
-    } catch (e) {
-      console.error("test push failed", e);
-    }
-  };
-
-  const dismissBanner = () => {
-    setPushDismissed(true);
-    localStorage.setItem("mp_push_banner_dismissed", "1");
-  };
 
 
   return (
