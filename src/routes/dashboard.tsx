@@ -10,9 +10,14 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PhoneFrame } from "@/components/PhoneFrame";
 import { useAccount, useBalance, useTxs, formatNGN, useNotifications } from "@/lib/store";
-import { enablePush, disablePush, pushOptedIn, pushPermission, firePush, dayKey } from "@/lib/earn";
-import { enableOneSignal, disableOneSignal } from "@/lib/onesignal";
+import { dayKey, firePush } from "@/lib/earn";
 import janeSupport from "@/assets/jane-support.jpg.asset.json";
+import { NotificationOverlay } from "@/components/NotificationOverlay";
+import { DailyReward } from "@/components/DailyReward";
+import { SpinWheel } from "@/components/SpinWheel";
+import { Leaderboard } from "@/components/Leaderboard";
+import { Badges } from "@/components/Badges";
+import { unlockBadge, addRewardHistory, isNotifEnabled } from "@/lib/rewards";
 
 
 
