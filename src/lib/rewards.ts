@@ -8,7 +8,9 @@ const REWARD_HISTORY_KEY = "mp_reward_history";
 export const DAILY_REWARDS = [100, 150, 200, 250, 300, 350, 500];
 export const DAILY_BONUS = 1000; // day 7 bonus
 
-export const SPIN_REWARDS = [100, 200, 500, 1000, 1500, 2000, 750, 300];
+export const SPIN_REWARDS = [3300, 2500, 1800, 6500];
+// Wheel display: 8 segments alternating amount / miss (0). Spins always land on an amount segment.
+export const SPIN_SEGMENTS: (number | 0)[] = [3300, 0, 2500, 0, 1800, 0, 6500, 0];
 
 export const LEADERBOARD_REWARDS = [10000, 7500, 5000];
 
