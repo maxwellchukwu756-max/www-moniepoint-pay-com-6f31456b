@@ -3,9 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowUpRight, ArrowDownLeft, Bell, Eye, EyeOff, Plus,
   Send, Receipt, Smartphone, Wallet, Tv, Zap, Trophy, Wifi,
-  IdCard, Banknote, PiggyBank, TrendingUp, Shield, Gift,
-  Bitcoin, GraduationCap, Plane, ShoppingBag, Headphones,
-  Home, CreditCard, User, LayoutGrid, Sparkles,
+  IdCard, CreditCard, User,
+  Home, LayoutGrid,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PhoneFrame } from "@/components/PhoneFrame";
@@ -42,19 +41,8 @@ const quickActions = [
   { slug: "cable-tv", icon: Tv, label: "Cable TV", color: "#DB2777" },
 ];
 
-const moreServices = [
-  { slug: "loans", icon: Banknote, label: "Loans", color: "#0D9488" },
-  { slug: "savings", icon: PiggyBank, label: "Savings", color: "#7C3AED" },
-  { slug: "investment", icon: TrendingUp, label: "Investment", color: "#059669" },
-  { slug: "insurance", icon: Shield, label: "Insurance", color: "#2563EB" },
-  { slug: "gift-cards", icon: Gift, label: "Gift Cards", color: "#E11D48" },
-  { slug: "crypto", icon: Bitcoin, label: "Crypto", color: "#F59E0B" },
-  { slug: "education", icon: GraduationCap, label: "Education", color: "#4338CA" },
-  { slug: "flights", icon: Plane, label: "Flights", color: "#0EA5E9" },
-  { slug: "shopping", icon: ShoppingBag, label: "Shopping", color: "#BE185D" },
-  { slug: "earn-more", icon: Sparkles, label: "Earn More", color: "#16A34A" },
-  { slug: "support", icon: Headphones, label: "Support", color: "#0EA5E9" },
-];
+// More services live on their own page (/more-services)
+
 
 // Pool of realistic Nigerian names by ethnic group — used for live activity ticker
 const NAME_POOL = [
@@ -334,20 +322,33 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* More Services */}
-        <div className="px-6 mt-6">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-sm">More Services</h3>
-          </div>
-          <div className="grid grid-cols-4 gap-y-4 gap-x-2">
-            {moreServices.map((a, i) => <ActionTile key={a.slug} a={a} i={i} />)}
-          </div>
-        </div>
-
+        {/* Daily Reward & Spin Wheel — kept close to Quick Actions */}
         <DailyReward />
         <SpinWheel />
+
+        {/* More Services — single button, opens full list on next page */}
+        <div className="px-6 mt-6">
+          <Link
+            to="/more-services"
+            className="w-full h-14 rounded-2xl bg-card border border-border flex items-center justify-between px-5"
+            style={{ boxShadow: "var(--shadow-card)" }}
+          >
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-brand-soft flex items-center justify-center">
+                <LayoutGrid className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-bold leading-tight">More Services</p>
+                <p className="text-[11px] text-muted-foreground leading-tight">Loans, Savings, Crypto & more</p>
+              </div>
+            </div>
+            <ArrowUpRight className="h-5 w-5 text-primary" />
+          </Link>
+        </div>
+
         <Badges />
         <Leaderboard />
+
 
         {/* Recent Transactions */}
         <div className="px-6 mt-6">
