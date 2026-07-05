@@ -334,20 +334,33 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* More Services */}
-        <div className="px-6 mt-6">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-sm">More Services</h3>
-          </div>
-          <div className="grid grid-cols-4 gap-y-4 gap-x-2">
-            {moreServices.map((a, i) => <ActionTile key={a.slug} a={a} i={i} />)}
-          </div>
-        </div>
-
+        {/* Daily Reward & Spin Wheel — kept close to Quick Actions */}
         <DailyReward />
         <SpinWheel />
+
+        {/* More Services — single button, opens full list on next page */}
+        <div className="px-6 mt-6">
+          <Link
+            to="/more-services"
+            className="w-full h-14 rounded-2xl bg-card border border-border flex items-center justify-between px-5"
+            style={{ boxShadow: "var(--shadow-card)" }}
+          >
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-brand-soft flex items-center justify-center">
+                <LayoutGrid className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-bold leading-tight">More Services</p>
+                <p className="text-[11px] text-muted-foreground leading-tight">Loans, Savings, Crypto & more</p>
+              </div>
+            </div>
+            <ArrowUpRight className="h-5 w-5 text-primary" />
+          </Link>
+        </div>
+
         <Badges />
         <Leaderboard />
+
 
         {/* Recent Transactions */}
         <div className="px-6 mt-6">
