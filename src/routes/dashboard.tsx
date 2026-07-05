@@ -3,9 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowUpRight, ArrowDownLeft, Bell, Eye, EyeOff, Plus,
   Send, Receipt, Smartphone, Wallet, Tv, Zap, Trophy, Wifi,
-  IdCard, Banknote, PiggyBank, TrendingUp, Shield, Gift,
-  Bitcoin, GraduationCap, Plane, ShoppingBag, Headphones,
-  Home, CreditCard, User, LayoutGrid, Sparkles,
+  IdCard, CreditCard, User,
+  Home, LayoutGrid,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PhoneFrame } from "@/components/PhoneFrame";
