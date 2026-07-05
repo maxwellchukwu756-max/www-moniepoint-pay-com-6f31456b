@@ -15,6 +15,7 @@ import { Route as SupportRouteImport } from './routes/support'
 import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as MoreServicesRouteImport } from './routes/more-services'
 import { Route as LoadingRouteImport } from './routes/loading'
 import { Route as EarnMoreRouteImport } from './routes/earn-more'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -51,6 +52,11 @@ const RegisterRoute = RegisterRouteImport.update({
 const NotificationsRoute = NotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MoreServicesRoute = MoreServicesRouteImport.update({
+  id: '/more-services',
+  path: '/more-services',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoadingRoute = LoadingRouteImport.update({
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/earn-more': typeof EarnMoreRoute
   '/loading': typeof LoadingRoute
+  '/more-services': typeof MoreServicesRoute
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
   '/rewards': typeof RewardsRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/earn-more': typeof EarnMoreRoute
   '/loading': typeof LoadingRoute
+  '/more-services': typeof MoreServicesRoute
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
   '/rewards': typeof RewardsRoute
@@ -127,6 +135,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/earn-more': typeof EarnMoreRoute
   '/loading': typeof LoadingRoute
+  '/more-services': typeof MoreServicesRoute
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
   '/rewards': typeof RewardsRoute
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/earn-more'
     | '/loading'
+    | '/more-services'
     | '/notifications'
     | '/register'
     | '/rewards'
@@ -159,6 +169,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/earn-more'
     | '/loading'
+    | '/more-services'
     | '/notifications'
     | '/register'
     | '/rewards'
@@ -174,6 +185,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/earn-more'
     | '/loading'
+    | '/more-services'
     | '/notifications'
     | '/register'
     | '/rewards'
@@ -190,6 +202,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   EarnMoreRoute: typeof EarnMoreRoute
   LoadingRoute: typeof LoadingRoute
+  MoreServicesRoute: typeof MoreServicesRoute
   NotificationsRoute: typeof NotificationsRoute
   RegisterRoute: typeof RegisterRoute
   RewardsRoute: typeof RewardsRoute
@@ -241,6 +254,13 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/notifications'
       preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/more-services': {
+      id: '/more-services'
+      path: '/more-services'
+      fullPath: '/more-services'
+      preLoaderRoute: typeof MoreServicesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/loading': {
@@ -302,6 +322,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   EarnMoreRoute: EarnMoreRoute,
   LoadingRoute: LoadingRoute,
+  MoreServicesRoute: MoreServicesRoute,
   NotificationsRoute: NotificationsRoute,
   RegisterRoute: RegisterRoute,
   RewardsRoute: RewardsRoute,
