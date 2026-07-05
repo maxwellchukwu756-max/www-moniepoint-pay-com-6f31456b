@@ -42,19 +42,8 @@ const quickActions = [
   { slug: "cable-tv", icon: Tv, label: "Cable TV", color: "#DB2777" },
 ];
 
-const moreServices = [
-  { slug: "loans", icon: Banknote, label: "Loans", color: "#0D9488" },
-  { slug: "savings", icon: PiggyBank, label: "Savings", color: "#7C3AED" },
-  { slug: "investment", icon: TrendingUp, label: "Investment", color: "#059669" },
-  { slug: "insurance", icon: Shield, label: "Insurance", color: "#2563EB" },
-  { slug: "gift-cards", icon: Gift, label: "Gift Cards", color: "#E11D48" },
-  { slug: "crypto", icon: Bitcoin, label: "Crypto", color: "#F59E0B" },
-  { slug: "education", icon: GraduationCap, label: "Education", color: "#4338CA" },
-  { slug: "flights", icon: Plane, label: "Flights", color: "#0EA5E9" },
-  { slug: "shopping", icon: ShoppingBag, label: "Shopping", color: "#BE185D" },
-  { slug: "earn-more", icon: Sparkles, label: "Earn More", color: "#16A34A" },
-  { slug: "support", icon: Headphones, label: "Support", color: "#0EA5E9" },
-];
+// More services live on their own page (/more-services)
+
 
 // Pool of realistic Nigerian names by ethnic group — used for live activity ticker
 const NAME_POOL = [
