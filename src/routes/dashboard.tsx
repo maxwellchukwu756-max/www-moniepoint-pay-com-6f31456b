@@ -322,12 +322,8 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* Daily Reward & Spin Wheel — kept close to Quick Actions */}
-        <DailyReward />
-        <SpinWheel />
-
-        {/* More Services — single button, opens full list on next page */}
-        <div className="px-6 mt-6">
+        {/* More Services — placed close to Quick Actions for visibility */}
+        <div className="px-6 mt-5">
           <Link
             to="/more-services"
             className="w-full h-14 rounded-2xl bg-card border border-border flex items-center justify-between px-5"
@@ -345,6 +341,11 @@ function Dashboard() {
             <ArrowUpRight className="h-5 w-5 text-primary" />
           </Link>
         </div>
+
+        {/* Daily Reward & Spin Wheel */}
+        <DailyReward />
+        <SpinWheel />
+
 
         <Badges />
         <Leaderboard />
