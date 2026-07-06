@@ -8,23 +8,90 @@ import { isNotifEnabled, setNotifEnabled } from "@/lib/rewards";
 export function NotificationOverlay() {
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (typeof Notification === "undefined") return; // unsupported
-    if (isNotifEnabled() && Notification.permission === "granted") return;
+    // Already enabled in our app-side flag → don't show again
+    if (isNotifEnabled()) return;
+    // If browser natively granted, mark and skip
+    if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+      setNotifEnabled(true);
+      return;
+    }
     setOpen(true);
   }, []);
 
+  const supportsNotifications =
+    typeof window !== "undefined" && typeof Notification !== "undefined";
+
   const handleEnable = async () => {
     setBusy(true);
+    setErrorMsg(null);
+
+    // Browser has no Notification API (some in-app browsers / older Samsung).
+    // Still enable in-app alerts + fire OneSignal (uses service worker) and close.
+    if (!supportsNotifications) {
+      try { await enableOneSignal(); } catch {}
+      setNotifEnabled(true);
+      setOpen(false);
+      setBusy(false);
+      return;
+    }
+
     try {
-      const ok = await enablePush();
-      await enableOneSignal();
-      if (ok && typeof Notification !== "undefined" && Notification.permission === "granted") {
+      // Fire OneSignal in parallel (its own permission flow will piggy-back).
+      enableOneSignal().catch(() => {});
+
+      // Call requestPermission directly inside the user gesture — required by
+      // Samsung Internet / iOS Safari / strict Chromium. Support both
+      // callback and Promise signatures.
+      let perm: NotificationPermission = Notification.permission;
+      if (perm === "default") {
+        perm = await new Promise<NotificationPermission>((resolve) => {
+          let settled = false;
+          const done = (p: NotificationPermission) => {
+            if (settled) return;
+            settled = true;
+            resolve(p);
+          };
+          try {
+            const maybe = Notification.requestPermission((p) => done(p));
+            if (maybe && typeof (maybe as Promise<NotificationPermission>).then === "function") {
+              (maybe as Promise<NotificationPermission>).then(done).catch(() => done(Notification.permission));
+            }
+          } catch {
+            done(Notification.permission);
+          }
+          // Safety timeout — some browsers never resolve if dialog is dismissed.
+          setTimeout(() => done(Notification.permission), 15000);
+        });
+      }
+
+      if (perm === "granted") {
+        await enablePush();
+        setNotifEnabled(true);
+        setOpen(false);
+      } else if (perm === "denied") {
+        // Permission denied — still let user into the app, but keep flag off
+        // so we can re-prompt next session. Show guidance.
+        setErrorMsg(
+          "Notifications are blocked in your browser settings. Please enable them from the site settings, then reopen the app."
+        );
+        // Allow proceeding after 1.5s
+        setTimeout(() => {
+          setNotifEnabled(true);
+          setOpen(false);
+        }, 1800);
+      } else {
+        // default / dismissed — mark enabled so user can continue
         setNotifEnabled(true);
         setOpen(false);
       }
+    } catch {
+      // Never trap the user — always let them into the dashboard
+      setNotifEnabled(true);
+      setOpen(false);
     } finally {
       setBusy(false);
     }
@@ -65,15 +132,31 @@ export function NotificationOverlay() {
               Enable notifications to receive balance alerts, MPAY updates, account activity, rewards and important reminders.
             </p>
 
+            {errorMsg && (
+              <p className="relative mt-3 text-xs text-red-500 leading-relaxed font-semibold">
+                {errorMsg}
+              </p>
+            )}
+
             <motion.button
               whileTap={{ scale: 0.97 }}
               disabled={busy}
               onClick={handleEnable}
-              className="relative mt-7 w-full h-14 rounded-2xl brand-gradient text-white font-black text-sm tracking-wide disabled:opacity-70"
+              className="relative mt-6 w-full h-14 rounded-2xl brand-gradient text-white font-black text-sm tracking-wide disabled:opacity-70"
               style={{ boxShadow: "0 12px 30px -10px rgba(0,0,255,0.5)" }}
             >
               {busy ? "ENABLING…" : "ENABLE NOTIFICATIONS"}
             </motion.button>
+
+            <button
+              onClick={() => {
+                setNotifEnabled(true);
+                setOpen(false);
+              }}
+              className="relative mt-3 text-[11px] font-semibold text-muted-foreground underline"
+            >
+              Continue without notifications
+            </button>
           </motion.div>
         </motion.div>
       )}
