@@ -294,7 +294,13 @@ function ProfilePanel() {
       window.dispatchEvent(new Event("mp:txs"));
       window.dispatchEvent(new Event("mp:notif"));
     } finally {
-      navigate({ to: "/activate" });
+      // Hard reload guarantees every in-memory state is dropped and the
+      // user is fully logged out, regardless of any cached React state.
+      try {
+        window.location.replace("/activate");
+      } catch {
+        navigate({ to: "/activate" });
+      }
     }
   };
 
