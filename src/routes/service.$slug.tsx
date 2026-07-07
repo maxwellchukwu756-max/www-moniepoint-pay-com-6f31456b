@@ -1,11 +1,11 @@
-import { createFileRoute, Link, Navigate, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link, Navigate, useRouter, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useEffect, useState, type ComponentType } from "react";
 import {
   ArrowLeft, Smartphone, Wifi, Receipt, Trophy, Zap, Tv,
   Banknote, PiggyBank, TrendingUp, Shield, Gift, Bitcoin,
   GraduationCap, Plane, ShoppingBag, Check, CreditCard, Wallet, User, Send,
-  Sparkles, Lock,
+  Sparkles, Lock, LogOut, AlertTriangle,
 } from "lucide-react";
 import { PhoneFrame } from "@/components/PhoneFrame";
 import { isValidMpayForTx, isGeneratedCode, formatNGN, useBalance, useTxs, genRef, addNotification, useAccount } from "@/lib/store";
@@ -257,8 +257,11 @@ function TaskGate({ slug, done, map }: { slug: string; done: number; map: Record
 
 function ProfilePanel() {
   const account = useAccount();
+  const navigate = useNavigate();
   const [pushOn, setPushOn] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   useEffect(() => { setPushOn(isOneSignalOptedIn()); }, []);
 
   const togglePush = async () => {
@@ -266,6 +269,33 @@ function ProfilePanel() {
     if (pushOn) { await disableOneSignal(); setPushOn(false); }
     else { const ok = await enableOneSignal(); setPushOn(ok || true); }
     setBusy(false);
+  };
+
+  const doLogout = async () => {
+    setLoggingOut(true);
+    try {
+      try { await disableOneSignal(); } catch { /* ignore */ }
+      // Wipe every trace of user data from this device
+      const keys: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k) keys.push(k);
+      }
+      keys.forEach((k) => {
+        if (k.startsWith("mp_") || k.startsWith("mp:") || k.startsWith("earn_") || k.startsWith("reward") || k.startsWith("notif")) {
+          localStorage.removeItem(k);
+        }
+      });
+      // Full nuke to guarantee no lingering session
+      localStorage.clear();
+      try { sessionStorage.clear(); } catch { /* ignore */ }
+      window.dispatchEvent(new Event("mp:account"));
+      window.dispatchEvent(new Event("mp:balance"));
+      window.dispatchEvent(new Event("mp:txs"));
+      window.dispatchEvent(new Event("mp:notif"));
+    } finally {
+      navigate({ to: "/activate" });
+    }
   };
 
   if (!account) {
@@ -306,6 +336,53 @@ function ProfilePanel() {
           {busy ? "…" : pushOn ? "OFF" : "ENABLE"}
         </button>
       </div>
+
+      <button
+        onClick={() => setConfirmOpen(true)}
+        className="w-full mt-2 h-12 rounded-2xl bg-red-600 text-white text-sm font-black flex items-center justify-center gap-2 active:scale-[0.98] transition"
+        style={{ boxShadow: "0 8px 20px -8px rgba(220,38,38,0.5)" }}
+      >
+        <LogOut className="h-4 w-4" />
+        LOGOUT
+      </button>
+
+      {confirmOpen && (
+        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+          <motion.div
+            initial={{ y: 40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="w-full max-w-[380px] bg-white rounded-3xl p-5 shadow-2xl"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="h-14 w-14 rounded-full bg-red-100 flex items-center justify-center">
+                <AlertTriangle className="h-7 w-7 text-red-600" />
+              </div>
+              <h3 className="mt-3 text-base font-black">Logout & Wipe Account?</h3>
+              <p className="mt-2 text-[12px] text-muted-foreground leading-relaxed">
+                <span className="font-bold text-red-600">Warning:</span> Logging out will permanently erase all your Moniepoint Pay data from this device — including your balance, transactions, rewards and account details.
+                <br /><br />
+                You will need to <span className="font-bold text-foreground">create a new/fresh account</span> to use Moniepoint Pay again. This action cannot be undone.
+              </p>
+            </div>
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setConfirmOpen(false)}
+                disabled={loggingOut}
+                className="h-11 rounded-xl border border-border text-xs font-black"
+              >
+                CANCEL
+              </button>
+              <button
+                onClick={doLogout}
+                disabled={loggingOut}
+                className="h-11 rounded-xl bg-red-600 text-white text-xs font-black"
+              >
+                {loggingOut ? "WIPING…" : "YES, LOGOUT"}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }
