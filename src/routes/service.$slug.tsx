@@ -5,7 +5,7 @@ import {
   ArrowLeft, Smartphone, Wifi, Receipt, Trophy, Zap, Tv,
   Banknote, PiggyBank, TrendingUp, Shield, Gift, Bitcoin,
   GraduationCap, Plane, ShoppingBag, Check, CreditCard, Wallet, User, Send,
-  Sparkles, Lock,
+  Sparkles, Lock, LogOut, AlertTriangle,
 } from "lucide-react";
 import { PhoneFrame } from "@/components/PhoneFrame";
 import { isValidMpayForTx, isGeneratedCode, formatNGN, useBalance, useTxs, genRef, addNotification, useAccount } from "@/lib/store";
