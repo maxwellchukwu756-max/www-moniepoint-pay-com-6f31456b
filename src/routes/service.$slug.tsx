@@ -271,38 +271,44 @@ function ProfilePanel() {
     setBusy(false);
   };
 
-  const doLogout = async () => {
+  const doLogout = () => {
     setLoggingOut(true);
+    // Fire-and-forget: never await OneSignal — on some devices/domains its
+    // SDK never initializes and the promise hangs forever, blocking logout.
+    try { void disableOneSignal(); } catch { /* ignore */ }
+
     try {
-      try { await disableOneSignal(); } catch { /* ignore */ }
-      // Wipe every trace of user data from this device
-      const keys: string[] = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k) keys.push(k);
-      }
-      keys.forEach((k) => {
-        if (k.startsWith("mp_") || k.startsWith("mp:") || k.startsWith("earn_") || k.startsWith("reward") || k.startsWith("notif")) {
-          localStorage.removeItem(k);
-        }
-      });
-      // Full nuke to guarantee no lingering session
       localStorage.clear();
-      try { sessionStorage.clear(); } catch { /* ignore */ }
+    } catch {
+      try {
+        const keys: string[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k) keys.push(k);
+        }
+        keys.forEach((k) => { try { localStorage.removeItem(k); } catch { /* ignore */ } });
+      } catch { /* ignore */ }
+    }
+    try { sessionStorage.clear(); } catch { /* ignore */ }
+
+    try {
       window.dispatchEvent(new Event("mp:account"));
       window.dispatchEvent(new Event("mp:balance"));
       window.dispatchEvent(new Event("mp:txs"));
       window.dispatchEvent(new Event("mp:notif"));
-    } finally {
-      // Hard reload guarantees every in-memory state is dropped and the
-      // user is fully logged out, regardless of any cached React state.
-      try {
-        window.location.replace("/activate");
-      } catch {
-        navigate({ to: "/activate" });
-      }
-    }
+    } catch { /* ignore */ }
+
+    // Hard navigation guarantees all in-memory state is dropped.
+    try {
+      window.location.href = "/activate";
+    } catch { /* ignore */ }
+
+    // Absolute fallback if the browser blocks the assignment.
+    setTimeout(() => {
+      try { window.location.replace("/activate"); } catch { /* ignore */ }
+    }, 400);
   };
+
 
   if (!account) {
     return (
