@@ -301,9 +301,8 @@ function ProfilePanel() {
     // Hard navigation guarantees all in-memory state is dropped.
     try {
       window.location.href = "/activate";
-    } catch {
-      navigate({ to: "/activate" });
-    }
+    } catch { /* ignore */ }
+
     // Absolute fallback if the browser blocks the assignment.
     setTimeout(() => {
       try { window.location.replace("/activate"); } catch { /* ignore */ }
