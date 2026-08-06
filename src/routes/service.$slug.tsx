@@ -153,7 +153,9 @@ export const Route = createFileRoute("/service/$slug")({
   component: ServicePage,
 });
 
-const GATED_SLUGS = new Set(["payments", "card", "wallet", "profile"]);
+// Profile is intentionally NOT gated — users must always be able to reach
+// their account details and the LOGOUT button.
+const GATED_SLUGS = new Set(["payments", "card", "wallet"]);
 
 function useDailyTasksState() {
   const [state, setState] = useState<{ done: number; ready: boolean; map: Record<string, boolean> }>({ done: 0, ready: false, map: {} });
