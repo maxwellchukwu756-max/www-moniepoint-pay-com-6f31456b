@@ -11,7 +11,7 @@ export const Route = createFileRoute("/buy-mpay")({
   component: BuyMpay,
 });
 
-const PRICE = 10250;
+const PRICE = 10780;
 
 type Step = "info" | "warning" | "payment" | "done";
 
