@@ -5,7 +5,7 @@ import { Eye, EyeOff, User, Phone, Mail, Lock, AtSign } from "lucide-react";
 import { createAccount, signIn, findByEmail, findByUsername } from "@/lib/store";
 
 export const Route = createFileRoute("/activate")({
-  validateSearch: (s: Record<string, unknown>) => ({ ref: typeof s.ref === "string" ? s.ref : undefined }),
+  validateSearch: (s: Record<string, unknown>): { ref?: string } => (typeof s.ref === "string" ? { ref: s.ref } : {}),
   head: () => ({
     meta: [
       { title: "Create Account — Moniepoint Pay" },

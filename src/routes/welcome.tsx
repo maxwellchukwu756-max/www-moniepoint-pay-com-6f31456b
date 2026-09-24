@@ -112,7 +112,7 @@ function Welcome() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
           whileTap={{ scale: 0.97 }}
-          onClick={() => navigate({ to: "/activate", search: {} })}
+          onClick={() => navigate({ to: "/activate" })}
           className="mt-8 w-full h-14 rounded-3xl text-white font-semibold text-base flex items-center justify-center gap-2 brand-gradient"
           style={{ boxShadow: "var(--shadow-float)" }}
         >
