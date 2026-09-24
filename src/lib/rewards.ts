@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 const DAILY_KEY = "mp_daily_reward";
 const SPIN_KEY = "mp_spin_last";
+export const SPIN_COOLDOWN_MS = 60 * 60 * 1000; // 1 hour
 const BADGES_KEY = "mp_badges";
 const REWARD_HISTORY_KEY = "mp_reward_history";
 
@@ -116,12 +117,12 @@ export function useSpin() {
     setLastSpin(read<number>(SPIN_KEY, 0));
   }, []);
   const now = Date.now();
-  const nextSpinAt = lastSpin + 24 * 60 * 60 * 1000;
+  const nextSpinAt = lastSpin + SPIN_COOLDOWN_MS;
   const ready = now >= nextSpinAt;
   const msUntil = Math.max(0, nextSpinAt - now);
   const spin = useCallback((): number | null => {
     const last = read<number>(SPIN_KEY, 0);
-    if (Date.now() < last + 24 * 60 * 60 * 1000) return null;
+    if (Date.now() < last + SPIN_COOLDOWN_MS) return null;
     const amount = SPIN_REWARDS[Math.floor(Math.random() * SPIN_REWARDS.length)];
     write(SPIN_KEY, Date.now());
     setLastSpin(Date.now());
