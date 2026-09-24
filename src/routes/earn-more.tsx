@@ -52,6 +52,7 @@ function EarnMore() {
           amount: 0,
           status: "Successful",
           dateISO: new Date().toISOString(),
+          category: "reward",
         });
         firePush("New Earn More Tasks", "Fresh tasks are available — complete them to earn cash today.");
       }
@@ -69,7 +70,7 @@ function EarnMore() {
     const dateISO = new Date().toISOString();
     // hidden: true keeps Earn More rewards OUT of dashboard "Recent Transactions"
     addTx({ id: ref, kind: "earn", name: "Earn More Reward", sub: title, amount: reward, reference: ref, dateISO, hidden: true });
-    addNotification({ id: ref, title: "Earn More Reward", sub: title, amount: reward, status: "Successful", dateISO });
+    addNotification({ id: ref, title: "Earn More Reward", sub: title, amount: reward, status: "Successful", dateISO, category: "reward" });
     setBalance(balance + reward);
     firePush("Task Completed", `${title} — you earned ${formatNGN(reward)}`);
   };

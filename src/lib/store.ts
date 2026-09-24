@@ -4,7 +4,8 @@ const BALANCE_KEY = "mp_balance";
 const TXS_KEY = "mp_txs";
 const ACCOUNT_KEY = "mp_account"; // current session: account snapshot
 const ACCOUNTS_KEY = "mp_accounts"; // all registered accounts
-const NOTIFS_KEY = "mp_notifications";
+const NOTIFS_KEY = "mp_notifications"; // transaction activities only
+const REWARD_NOTIFS_KEY = "mp_reward_notifications"; // EARN / rewards only
 const REFERRALS_KEY = "mp_referrals";
 
 // Valid MPAY ID code constant — purchased/generated codes are NOT valid for transactions
@@ -47,6 +48,7 @@ export type Notification = {
   status: "Successful" | "Pending" | "Failed";
   dateISO: string;
   read?: boolean;
+  category?: "transaction" | "reward";
 };
 
 function read<T>(key: string, fallback: T): T {
@@ -197,28 +199,59 @@ export function useTxs() {
 
 // ---------- Notifications ----------
 
+function isRewardNotif(n: Notification) {
+  if (n.category) return n.category === "reward";
+  return /earn|reward|bonus|spin|streak|referral|leaderboard|badge/i.test(n.title);
+}
+
+// One-time migration: move existing EARN/reward entries out of the transaction list.
+function migrateNotifs() {
+  if (typeof window === "undefined") return;
+  if (localStorage.getItem("mp_notifs_split_v1")) return;
+  const all = read<Notification[]>(NOTIFS_KEY, []);
+  const rewards = all.filter(isRewardNotif).map(n => ({ ...n, category: "reward" as const }));
+  const txs = all.filter(n => !isRewardNotif(n)).map(n => ({ ...n, category: "transaction" as const }));
+  const existing = read<Notification[]>(REWARD_NOTIFS_KEY, []);
+  const ids = new Set(existing.map(e => e.id));
+  write(NOTIFS_KEY, txs);
+  write(REWARD_NOTIFS_KEY, [...existing, ...rewards.filter(r => !ids.has(r.id))]
+    .sort((a, b) => b.dateISO.localeCompare(a.dateISO)).slice(0, 200));
+  localStorage.setItem("mp_notifs_split_v1", "1");
+}
+
 export function addNotification(n: Notification) {
-  const list = [n, ...read<Notification[]>(NOTIFS_KEY, [])].slice(0, 100);
-  write(NOTIFS_KEY, list);
+  migrateNotifs();
+  const reward = isRewardNotif(n);
+  const key = reward ? REWARD_NOTIFS_KEY : NOTIFS_KEY;
+  const item = { ...n, category: reward ? ("reward" as const) : ("transaction" as const) };
+  const list = [item, ...read<Notification[]>(key, [])].slice(0, reward ? 200 : 100);
+  write(key, list);
   if (typeof window !== "undefined") window.dispatchEvent(new Event("mp:notif"));
 }
 
-export function useNotifications() {
-  const [items, setItems] = useState<Notification[]>([]);
+export function useNotifications(kind: "transaction" | "reward" | "all" = "all") {
+  const [txItems, setTx] = useState<Notification[]>([]);
+  const [rwItems, setRw] = useState<Notification[]>([]);
   useEffect(() => {
-    setItems(read<Notification[]>(NOTIFS_KEY, []));
-    const fn = () => setItems(read<Notification[]>(NOTIFS_KEY, []));
+    migrateNotifs();
+    const fn = () => {
+      setTx(read<Notification[]>(NOTIFS_KEY, []));
+      setRw(read<Notification[]>(REWARD_NOTIFS_KEY, []));
+    };
+    fn();
     window.addEventListener("mp:notif", fn);
     return () => window.removeEventListener("mp:notif", fn);
   }, []);
   const markAllRead = useCallback(() => {
-    const list = read<Notification[]>(NOTIFS_KEY, []).map(n => ({ ...n, read: true }));
-    write(NOTIFS_KEY, list);
-    setItems(list);
+    const keys = kind === "transaction" ? [NOTIFS_KEY] : kind === "reward" ? [REWARD_NOTIFS_KEY] : [NOTIFS_KEY, REWARD_NOTIFS_KEY];
+    for (const k of keys) write(k, read<Notification[]>(k, []).map(n => ({ ...n, read: true })));
+    setTx(read<Notification[]>(NOTIFS_KEY, []));
+    setRw(read<Notification[]>(REWARD_NOTIFS_KEY, []));
     window.dispatchEvent(new Event("mp:notif"));
-  }, []);
+  }, [kind]);
+  const items = kind === "transaction" ? txItems : kind === "reward" ? rwItems : [...txItems, ...rwItems];
   const unread = items.filter(n => !n.read).length;
-  return { notifications: items, unread, markAllRead };
+  return { notifications: items, unread, unreadTx: txItems.filter(n => !n.read).length, unreadRewards: rwItems.filter(n => !n.read).length, markAllRead };
 }
 
 // ---------- Generated MPAY ID code (per user, unique) ----------
