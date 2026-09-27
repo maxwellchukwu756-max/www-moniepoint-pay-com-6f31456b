@@ -22,7 +22,9 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as BuyMpayRouteImport } from './routes/buy-mpay'
 import { Route as ActivateRouteImport } from './routes/activate'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as NotificationsIndexRouteImport } from './routes/notifications.index'
 import { Route as ServiceSlugRouteImport } from './routes/service.$slug'
+import { Route as NotificationsRewardsRouteImport } from './routes/notifications.rewards'
 
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
@@ -89,10 +91,20 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NotificationsIndexRoute = NotificationsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => NotificationsRoute,
+} as any)
 const ServiceSlugRoute = ServiceSlugRouteImport.update({
   id: '/service/$slug',
   path: '/service/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRewardsRoute = NotificationsRewardsRouteImport.update({
+  id: '/rewards',
+  path: '/rewards',
+  getParentRoute: () => NotificationsRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -103,13 +115,15 @@ export interface FileRoutesByFullPath {
   '/earn-more': typeof EarnMoreRoute
   '/loading': typeof LoadingRoute
   '/more-services': typeof MoreServicesRoute
-  '/notifications': typeof NotificationsRoute
+  '/notifications': typeof NotificationsRouteWithChildren
   '/register': typeof RegisterRoute
   '/rewards': typeof RewardsRoute
   '/support': typeof SupportRoute
   '/transfer': typeof TransferRoute
   '/welcome': typeof WelcomeRoute
+  '/notifications/rewards': typeof NotificationsRewardsRoute
   '/service/$slug': typeof ServiceSlugRoute
+  '/notifications/': typeof NotificationsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -119,13 +133,14 @@ export interface FileRoutesByTo {
   '/earn-more': typeof EarnMoreRoute
   '/loading': typeof LoadingRoute
   '/more-services': typeof MoreServicesRoute
-  '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
   '/rewards': typeof RewardsRoute
   '/support': typeof SupportRoute
   '/transfer': typeof TransferRoute
   '/welcome': typeof WelcomeRoute
+  '/notifications/rewards': typeof NotificationsRewardsRoute
   '/service/$slug': typeof ServiceSlugRoute
+  '/notifications': typeof NotificationsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -136,13 +151,15 @@ export interface FileRoutesById {
   '/earn-more': typeof EarnMoreRoute
   '/loading': typeof LoadingRoute
   '/more-services': typeof MoreServicesRoute
-  '/notifications': typeof NotificationsRoute
+  '/notifications': typeof NotificationsRouteWithChildren
   '/register': typeof RegisterRoute
   '/rewards': typeof RewardsRoute
   '/support': typeof SupportRoute
   '/transfer': typeof TransferRoute
   '/welcome': typeof WelcomeRoute
+  '/notifications/rewards': typeof NotificationsRewardsRoute
   '/service/$slug': typeof ServiceSlugRoute
+  '/notifications/': typeof NotificationsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -160,7 +177,9 @@ export interface FileRouteTypes {
     | '/support'
     | '/transfer'
     | '/welcome'
+    | '/notifications/rewards'
     | '/service/$slug'
+    | '/notifications/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -170,13 +189,14 @@ export interface FileRouteTypes {
     | '/earn-more'
     | '/loading'
     | '/more-services'
-    | '/notifications'
     | '/register'
     | '/rewards'
     | '/support'
     | '/transfer'
     | '/welcome'
+    | '/notifications/rewards'
     | '/service/$slug'
+    | '/notifications'
   id:
     | '__root__'
     | '/'
@@ -192,7 +212,9 @@ export interface FileRouteTypes {
     | '/support'
     | '/transfer'
     | '/welcome'
+    | '/notifications/rewards'
     | '/service/$slug'
+    | '/notifications/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -203,7 +225,7 @@ export interface RootRouteChildren {
   EarnMoreRoute: typeof EarnMoreRoute
   LoadingRoute: typeof LoadingRoute
   MoreServicesRoute: typeof MoreServicesRoute
-  NotificationsRoute: typeof NotificationsRoute
+  NotificationsRoute: typeof NotificationsRouteWithChildren
   RegisterRoute: typeof RegisterRoute
   RewardsRoute: typeof RewardsRoute
   SupportRoute: typeof SupportRoute
@@ -305,6 +327,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/notifications/': {
+      id: '/notifications/'
+      path: '/'
+      fullPath: '/notifications/'
+      preLoaderRoute: typeof NotificationsIndexRouteImport
+      parentRoute: typeof NotificationsRoute
+    }
     '/service/$slug': {
       id: '/service/$slug'
       path: '/service/$slug'
@@ -312,8 +341,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServiceSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/notifications/rewards': {
+      id: '/notifications/rewards'
+      path: '/rewards'
+      fullPath: '/notifications/rewards'
+      preLoaderRoute: typeof NotificationsRewardsRouteImport
+      parentRoute: typeof NotificationsRoute
+    }
   }
 }
+
+interface NotificationsRouteChildren {
+  NotificationsRewardsRoute: typeof NotificationsRewardsRoute
+  NotificationsIndexRoute: typeof NotificationsIndexRoute
+}
+
+const NotificationsRouteChildren: NotificationsRouteChildren = {
+  NotificationsRewardsRoute: NotificationsRewardsRoute,
+  NotificationsIndexRoute: NotificationsIndexRoute,
+}
+
+const NotificationsRouteWithChildren = NotificationsRoute._addFileChildren(
+  NotificationsRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -323,7 +373,7 @@ const rootRouteChildren: RootRouteChildren = {
   EarnMoreRoute: EarnMoreRoute,
   LoadingRoute: LoadingRoute,
   MoreServicesRoute: MoreServicesRoute,
-  NotificationsRoute: NotificationsRoute,
+  NotificationsRoute: NotificationsRouteWithChildren,
   RegisterRoute: RegisterRoute,
   RewardsRoute: RewardsRoute,
   SupportRoute: SupportRoute,

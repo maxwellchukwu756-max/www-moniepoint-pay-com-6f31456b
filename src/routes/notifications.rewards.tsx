@@ -20,11 +20,11 @@ function RewardsActivities() {
   const { notifications, markAllRead, unreadTx } = useNotifications("reward");
   const history = useRewardHistory();
   const items = useMemo<ActivityItem[]>(() => {
-    const fromHistory: ActivityItem[] = history.items.map((r) => ({
+    const fromHistory: ActivityItem[] = history.map((r) => ({
       id: r.id, title: r.title, sub: "Reward credited to your balance", amount: r.amount, status: "Credited", dateISO: r.dateISO,
     }));
     return [...notifications, ...fromHistory].sort((a, b) => b.dateISO.localeCompare(a.dateISO));
-  }, [notifications, history.items]);
+  }, [notifications, history]);
   return (
     <ActivityPage
       tab="rewards"
