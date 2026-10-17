@@ -81,7 +81,7 @@ function TransferPage() {
       }
       setTx({ ref, dateISO });
       setStep("success");
-    }, 1800);
+    }, 5000);
   };
 
   return (
