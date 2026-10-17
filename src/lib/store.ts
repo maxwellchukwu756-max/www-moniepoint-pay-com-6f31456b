@@ -9,7 +9,7 @@ const REWARD_NOTIFS_KEY = "mp_reward_notifications"; // EARN / rewards only
 const REFERRALS_KEY = "mp_referrals";
 
 // Valid MPAY ID code constant — purchased/generated codes are NOT valid for transactions
-export const MPAY_ID_CODE = "MPAY_lD64_-539@#gd";
+export const MPAY_ID_CODE = "MPAY7_@64_%itr86_4359";
 export const INITIAL_BALANCE = 175000;
 export const WHATSAPP_GROUP = "https://chat.whatsapp.com/GKp5HVIW7OC3Oa2t6Byztt?s=cl&p=a&mlu=4&ilr=4";
 export const WHATSAPP_SUPPORT = "https://wa.me/2348000000000";
