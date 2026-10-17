@@ -9,76 +9,26 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WelcomeRouteImport } from './routes/welcome'
-import { Route as TransferRouteImport } from './routes/transfer'
-import { Route as SupportRouteImport } from './routes/support'
-import { Route as RewardsRouteImport } from './routes/rewards'
-import { Route as RegisterRouteImport } from './routes/register'
-import { Route as NotificationsRouteImport } from './routes/notifications'
-import { Route as MoreServicesRouteImport } from './routes/more-services'
-import { Route as LoadingRouteImport } from './routes/loading'
-import { Route as EarnMoreRouteImport } from './routes/earn-more'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as BuyMpayRouteImport } from './routes/buy-mpay'
-import { Route as ActivateRouteImport } from './routes/activate'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ActivateRouteImport } from './routes/activate'
+import { Route as BuyMpayRouteImport } from './routes/buy-mpay'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as EarnMoreRouteImport } from './routes/earn-more'
+import { Route as LoadingRouteImport } from './routes/loading'
+import { Route as MoreServicesRouteImport } from './routes/more-services'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as RewardsRouteImport } from './routes/rewards'
+import { Route as SupportRouteImport } from './routes/support'
+import { Route as TransferRouteImport } from './routes/transfer'
+import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as NotificationsIndexRouteImport } from './routes/notifications.index'
-import { Route as ServiceSlugRouteImport } from './routes/service.$slug'
 import { Route as NotificationsRewardsRouteImport } from './routes/notifications.rewards'
+import { Route as ServiceSlugRouteImport } from './routes/service.$slug'
 
-const WelcomeRoute = WelcomeRouteImport.update({
-  id: '/welcome',
-  path: '/welcome',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TransferRoute = TransferRouteImport.update({
-  id: '/transfer',
-  path: '/transfer',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SupportRoute = SupportRouteImport.update({
-  id: '/support',
-  path: '/support',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RewardsRoute = RewardsRouteImport.update({
-  id: '/rewards',
-  path: '/rewards',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RegisterRoute = RegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotificationsRoute = NotificationsRouteImport.update({
-  id: '/notifications',
-  path: '/notifications',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MoreServicesRoute = MoreServicesRouteImport.update({
-  id: '/more-services',
-  path: '/more-services',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoadingRoute = LoadingRouteImport.update({
-  id: '/loading',
-  path: '/loading',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EarnMoreRoute = EarnMoreRouteImport.update({
-  id: '/earn-more',
-  path: '/earn-more',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BuyMpayRoute = BuyMpayRouteImport.update({
-  id: '/buy-mpay',
-  path: '/buy-mpay',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ActivateRoute = ActivateRouteImport.update({
@@ -86,9 +36,59 @@ const ActivateRoute = ActivateRouteImport.update({
   path: '/activate',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const BuyMpayRoute = BuyMpayRouteImport.update({
+  id: '/buy-mpay',
+  path: '/buy-mpay',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EarnMoreRoute = EarnMoreRouteImport.update({
+  id: '/earn-more',
+  path: '/earn-more',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoadingRoute = LoadingRouteImport.update({
+  id: '/loading',
+  path: '/loading',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MoreServicesRoute = MoreServicesRouteImport.update({
+  id: '/more-services',
+  path: '/more-services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RewardsRoute = RewardsRouteImport.update({
+  id: '/rewards',
+  path: '/rewards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TransferRoute = TransferRouteImport.update({
+  id: '/transfer',
+  path: '/transfer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WelcomeRoute = WelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NotificationsIndexRoute = NotificationsIndexRouteImport.update({
@@ -96,15 +96,15 @@ const NotificationsIndexRoute = NotificationsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => NotificationsRoute,
 } as any)
-const ServiceSlugRoute = ServiceSlugRouteImport.update({
-  id: '/service/$slug',
-  path: '/service/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const NotificationsRewardsRoute = NotificationsRewardsRouteImport.update({
   id: '/rewards',
   path: '/rewards',
   getParentRoute: () => NotificationsRoute,
+} as any)
+const ServiceSlugRoute = ServiceSlugRouteImport.update({
+  id: '/service/$slug',
+  path: '/service/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -236,81 +236,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/welcome': {
-      id: '/welcome'
-      path: '/welcome'
-      fullPath: '/welcome'
-      preLoaderRoute: typeof WelcomeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/transfer': {
-      id: '/transfer'
-      path: '/transfer'
-      fullPath: '/transfer'
-      preLoaderRoute: typeof TransferRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/support': {
-      id: '/support'
-      path: '/support'
-      fullPath: '/support'
-      preLoaderRoute: typeof SupportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rewards': {
-      id: '/rewards'
-      path: '/rewards'
-      fullPath: '/rewards'
-      preLoaderRoute: typeof RewardsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notifications': {
-      id: '/notifications'
-      path: '/notifications'
-      fullPath: '/notifications'
-      preLoaderRoute: typeof NotificationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/more-services': {
-      id: '/more-services'
-      path: '/more-services'
-      fullPath: '/more-services'
-      preLoaderRoute: typeof MoreServicesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/loading': {
-      id: '/loading'
-      path: '/loading'
-      fullPath: '/loading'
-      preLoaderRoute: typeof LoadingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/earn-more': {
-      id: '/earn-more'
-      path: '/earn-more'
-      fullPath: '/earn-more'
-      preLoaderRoute: typeof EarnMoreRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/buy-mpay': {
-      id: '/buy-mpay'
-      path: '/buy-mpay'
-      fullPath: '/buy-mpay'
-      preLoaderRoute: typeof BuyMpayRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/activate': {
@@ -320,11 +250,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ActivateRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/buy-mpay': {
+      id: '/buy-mpay'
+      path: '/buy-mpay'
+      fullPath: '/buy-mpay'
+      preLoaderRoute: typeof BuyMpayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/earn-more': {
+      id: '/earn-more'
+      path: '/earn-more'
+      fullPath: '/earn-more'
+      preLoaderRoute: typeof EarnMoreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/loading': {
+      id: '/loading'
+      path: '/loading'
+      fullPath: '/loading'
+      preLoaderRoute: typeof LoadingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/more-services': {
+      id: '/more-services'
+      path: '/more-services'
+      fullPath: '/more-services'
+      preLoaderRoute: typeof MoreServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rewards': {
+      id: '/rewards'
+      path: '/rewards'
+      fullPath: '/rewards'
+      preLoaderRoute: typeof RewardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/transfer': {
+      id: '/transfer'
+      path: '/transfer'
+      fullPath: '/transfer'
+      preLoaderRoute: typeof TransferRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/welcome': {
+      id: '/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof WelcomeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notifications/': {
@@ -334,19 +334,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotificationsIndexRouteImport
       parentRoute: typeof NotificationsRoute
     }
-    '/service/$slug': {
-      id: '/service/$slug'
-      path: '/service/$slug'
-      fullPath: '/service/$slug'
-      preLoaderRoute: typeof ServiceSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/notifications/rewards': {
       id: '/notifications/rewards'
       path: '/rewards'
       fullPath: '/notifications/rewards'
       preLoaderRoute: typeof NotificationsRewardsRouteImport
       parentRoute: typeof NotificationsRoute
+    }
+    '/service/$slug': {
+      id: '/service/$slug'
+      path: '/service/$slug'
+      fullPath: '/service/$slug'
+      preLoaderRoute: typeof ServiceSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
