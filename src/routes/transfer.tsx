@@ -181,6 +181,17 @@ function TransferPage() {
                 </motion.div>
                 <p className="text-lg font-black">Sending...</p>
                 <p className="text-xs text-muted-foreground">Please wait...</p>
+                <div className="w-full h-1.5 mt-2 rounded-full bg-brand-soft overflow-hidden">
+                  <motion.div
+                    initial={{ width: "0%" }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: 5, ease: "linear" }}
+                    className="h-full rounded-full brand-gradient"
+                  />
+                </div>
+                <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground">
+                  {formatNGN(Number(amount))} to {name || "Recipient"}
+                </p>
               </motion.div>
             )}
 
