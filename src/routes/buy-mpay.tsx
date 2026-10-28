@@ -188,7 +188,7 @@ function BuyMpay() {
 
                 <div className="mt-4 rounded-2xl border p-3 text-left" style={{ background: "#FEF2F2", borderColor: "#FCA5A5" }}>
                   <p className="text-[11px] font-semibold" style={{ color: "#991B1B" }}>
-                    We could not verify your payment to the provided Moniepoint MFB account. Please transfer the exact amount using your registered bank and try again.
+                    We could not verify your payment to the provided Sterling Bank account. Please transfer the exact amount using your registered bank and try again.
                   </p>
                 </div>
 
