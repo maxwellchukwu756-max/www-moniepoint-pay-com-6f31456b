@@ -155,9 +155,9 @@ function BuyMpay() {
               <motion.div key="payment" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}>
                 <p className="text-[11px] uppercase tracking-widest font-semibold text-muted-foreground mb-2">Transfer to</p>
                 <div className="rounded-2xl bg-card border border-border p-4 space-y-3" style={{ boxShadow: "var(--shadow-card)" }}>
-                  <DetailRow label="Account Name" value="Mod.., Chi.., Agb..." />
-                  <DetailRow label="Account Number" value="6711230988" copy />
-                  <DetailRow label="Bank" value="Moniepoint MFB" />
+                  <DetailRow label="Account Name" value="CH.. MA.." />
+                  <DetailRow label="Account Number" value="0150934472" copy />
+                  <DetailRow label="Bank" value="Sterling Bank" />
                   <DetailRow label="Amount" value={formatNGN(PRICE)} />
                 </div>
 
