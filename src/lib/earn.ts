@@ -19,7 +19,7 @@ export const ALL_TASKS = [
   "Engage on Twitter / X",
   "Like Instagram posts",
   "Comment on TikTok videos",
-  "Join WhatsApp community",
+  "Join Telegram community",
   "Test new payment features",
   "Refer a merchant",
   "Watch product tutorial",

@@ -1,8 +1,9 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ArrowLeft, MessageCircle, Users, Headphones } from "lucide-react";
+import { ArrowLeft, MessageCircle, Headphones } from "lucide-react";
 import { PhoneFrame } from "@/components/PhoneFrame";
-import { WHATSAPP_GROUP, WHATSAPP_SUPPORT } from "@/lib/store";
+import { TelegramIcon } from "@/components/TelegramIcon";
+import { TELEGRAM_CHANNEL, WHATSAPP_SUPPORT } from "@/lib/store";
 
 export const Route = createFileRoute("/support")({
   head: () => ({ meta: [{ title: "Customer Support — Moniepoint Pay" }] }),
@@ -18,11 +19,11 @@ const options = [
     href: WHATSAPP_SUPPORT,
   },
   {
-    icon: Users,
-    title: "Join WhatsApp Group",
+    icon: TelegramIcon,
+    title: "JOIN OUR TELEGRAM CHANNEL",
     sub: "Get updates & community support",
-    color: "#16A34A",
-    href: WHATSAPP_GROUP,
+    color: "var(--primary)",
+    href: TELEGRAM_CHANNEL,
   },
   {
     icon: Headphones,
@@ -52,7 +53,7 @@ function Support() {
               key={o.title}
               href={o.href}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08 }}
@@ -60,7 +61,7 @@ function Support() {
               className="flex items-center gap-3 p-4 rounded-2xl bg-card border border-border"
               style={{ boxShadow: "var(--shadow-card)" }}
             >
-              <div className="h-12 w-12 rounded-2xl flex items-center justify-center" style={{ background: `${o.color}15` }}>
+              <div className="h-12 w-12 rounded-2xl flex items-center justify-center" style={{ background: `color-mix(in srgb, ${o.color} 9%, transparent)` }}>
                 <o.icon className="h-6 w-6" style={{ color: o.color }} />
               </div>
               <div className="flex-1 min-w-0">

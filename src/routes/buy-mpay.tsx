@@ -1,9 +1,10 @@
 import { createFileRoute, useRouter, useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, AlertTriangle, Upload, Check, IdCard, Copy, MessageCircle, Headphones, ShieldCheck, XCircle } from "lucide-react";
+import { ArrowLeft, AlertTriangle, Upload, Check, IdCard, Copy, Headphones, ShieldCheck, XCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { PhoneFrame } from "@/components/PhoneFrame";
-import { useAccount, formatNGN, useBalance, generateMpayCode, updateCurrentAccount, WHATSAPP_GROUP, WHATSAPP_SUPPORT } from "@/lib/store";
+import { TelegramIcon } from "@/components/TelegramIcon";
+import { useAccount, formatNGN, useBalance, generateMpayCode, updateCurrentAccount, TELEGRAM_CHANNEL } from "@/lib/store";
 import bankWarningAsset from "@/assets/bank-warning.png.asset.json";
 
 export const Route = createFileRoute("/buy-mpay")({
@@ -199,8 +200,8 @@ function BuyMpay() {
                   <button onClick={() => navigate({ to: "/support" })} className="w-full h-12 rounded-2xl flex items-center justify-center gap-2 text-sm font-bold border border-border">
                     <Headphones className="h-4 w-4" /> CONTACT SUPPORT
                   </button>
-                  <a href={WHATSAPP_GROUP} target="_blank" rel="noreferrer" className="w-full h-12 rounded-2xl flex items-center justify-center gap-2 text-sm font-bold text-white" style={{ background: "#25D366" }}>
-                    <MessageCircle className="h-4 w-4" /> WHATSAPP SUPPORT
+                  <a href={TELEGRAM_CHANNEL} target="_blank" rel="noopener noreferrer" className="w-full h-12 rounded-2xl flex items-center justify-center gap-2 text-sm font-bold bg-primary text-primary-foreground">
+                    <TelegramIcon className="h-4 w-4" /> JOIN TELEGRAM
                   </a>
                 </div>
 
