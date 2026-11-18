@@ -1,14 +1,24 @@
 import { createFileRoute, useRouter, useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, AlertTriangle, Upload, Check, IdCard, Copy, Headphones, ShieldCheck, XCircle } from "lucide-react";
+import { ArrowLeft, AlertTriangle, Upload, Check, IdCard, Copy, Headphones, ShieldCheck, Clock3, LockKeyhole, XCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { PhoneFrame } from "@/components/PhoneFrame";
 import { TelegramIcon } from "@/components/TelegramIcon";
-import { useAccount, formatNGN, useBalance, generateMpayCode, updateCurrentAccount, TELEGRAM_CHANNEL } from "@/lib/store";
+import { useAccount, formatNGN, TELEGRAM_CHANNEL } from "@/lib/store";
+import { Button } from "@/components/ui/button";
 import bankWarningAsset from "@/assets/bank-warning.png.asset.json";
 
 export const Route = createFileRoute("/buy-mpay")({
-  head: () => ({ meta: [{ title: "Buy MPAY ID — Moniepoint Pay" }] }),
+  head: () => ({
+    meta: [
+      { title: "Buy MPAY ID — Moniepoint Pay" },
+      { name: "description", content: "Review your Moniepoint Pay MPAY ID purchase status." },
+      { property: "og:title", content: "Buy MPAY ID — Moniepoint Pay" },
+      { property: "og:description", content: "Review your Moniepoint Pay MPAY ID purchase status." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: BuyMpay,
 });
 
@@ -20,7 +30,6 @@ function BuyMpay() {
   const router = useRouter();
   const navigate = useNavigate();
   const account = useAccount();
-  const { balance, setBalance } = useBalance();
   const [step, setStep] = useState<Step>("info");
   const [editing, setEditing] = useState(false);
   const [fullName, setFullName] = useState("");
@@ -28,8 +37,6 @@ function BuyMpay() {
   const [email, setEmail] = useState("");
   const [receipt, setReceipt] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [generatedCode, setGeneratedCode] = useState<string>("");
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (account && !fullName && !phone && !email) {
@@ -42,25 +49,15 @@ function BuyMpay() {
   const confirmPayment = () => {
     setSubmitting(true);
     setTimeout(() => {
-      const code = account ? generateMpayCode(account) : `MPAY%_ID${Math.floor(100 + Math.random() * 900)}_CODE_${Math.floor(1000 + Math.random() * 9000)}`;
-      if (account) updateCurrentAccount({ generatedCode: code });
-      setGeneratedCode(code);
-      setBalance(Math.max(0, balance - PRICE));
       setStep("done");
       setSubmitting(false);
     }, 1500);
   };
 
-  const copyCode = async () => {
-    try { await navigator.clipboard.writeText(generatedCode); } catch {}
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1800);
-  };
-
   return (
     <PhoneFrame>
       <div className="flex-1 flex flex-col bg-background text-foreground">
-        <div className="px-6 pt-10 pb-6 relative overflow-hidden brand-gradient text-white">
+        {step !== "done" && <div className="px-6 pt-10 pb-6 relative overflow-hidden brand-gradient text-white">
           <button onClick={() => router.history.back()} className="h-10 w-10 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
             <ArrowLeft className="h-5 w-5" />
           </button>
@@ -73,9 +70,9 @@ function BuyMpay() {
               <p className="text-[11px] opacity-90">Your unique Moniepoint Pay identity</p>
             </div>
           </div>
-        </div>
+        </div>}
 
-        <div className="flex-1 px-6 py-5">
+        <div className={step === "done" ? "flex-1" : "flex-1 px-6 py-5"}>
           <AnimatePresence mode="wait">
             {step === "info" && (
               <motion.div key="info" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
@@ -178,37 +175,75 @@ function BuyMpay() {
             )}
 
             {step === "done" && (
-              <motion.div key="done" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center pt-4">
-                <div className="mx-auto h-16 w-16 rounded-full flex items-center justify-center" style={{ background: "#FEE2E2" }}>
-                  <XCircle className="h-9 w-9" strokeWidth={2.5} style={{ color: "#DC2626" }} />
-                </div>
-                <h2 className="mt-3 text-lg font-black tracking-tight" style={{ color: "#DC2626" }}>Payment Not Confirmed</h2>
-                <p className="mt-2 text-xs font-semibold px-2 leading-relaxed">
-                  Dear User, kindly go back and follow the instructions carefully to make your payment and obtain your MPAY ID CODE.
-                </p>
+              <motion.section key="done" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex min-h-full flex-col">
+                <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 bg-review-navy px-5 py-4 text-primary-foreground">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary-foreground/10">
+                      <IdCard className="h-5 w-5" aria-hidden="true" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-bold">MONIEPOINT PAY</p>
+                      <p className="text-xs opacity-80">MPAY ID PURCHASE</p>
+                    </div>
+                  </div>
+                  <span className="flex shrink-0 items-center gap-1.5 rounded-full bg-review-green/15 px-3 py-1.5 text-xs font-semibold text-review-green">
+                    <LockKeyhole className="h-3.5 w-3.5" aria-hidden="true" /> Secure
+                  </span>
+                </header>
 
-                <div className="mt-4 rounded-2xl border p-3 text-left" style={{ background: "#FEF2F2", borderColor: "#FCA5A5" }}>
-                  <p className="text-[11px] font-semibold" style={{ color: "#991B1B" }}>
-                    We could not verify your payment to the provided Sterling Bank account. Please transfer the exact amount using your registered bank and try again.
-                  </p>
-                </div>
+                <div className="flex flex-1 flex-col bg-muted px-4 py-4 sm:px-5">
+                  <div className="mx-auto flex w-full max-w-sm flex-1 flex-col rounded-3xl border border-border bg-background p-5 shadow-[var(--shadow-card)] sm:p-6">
+                    <div className="flex flex-col items-center text-center">
+                      <motion.div
+                        animate={{ scale: [1, 1.045, 1] }}
+                        transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+                        className="grid h-20 w-20 place-items-center rounded-full bg-review-green-soft text-review-green"
+                      >
+                        <Clock3 className="h-10 w-10" strokeWidth={2.2} aria-hidden="true" />
+                      </motion.div>
+                      <h2 className="mt-4 text-xl font-bold text-review-navy">Payment Under Review</h2>
+                      <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
+                        Your MPAY ID purchase request is awaiting payment verification.
+                      </p>
+                      <span className="mt-3 rounded-full bg-review-amber-soft px-3 py-1.5 text-xs font-semibold text-review-amber">
+                        PENDING REVIEW
+                      </span>
+                    </div>
 
-                <div className="mt-5 space-y-2.5">
-                  <button onClick={() => setStep("payment")} className="w-full h-12 rounded-2xl text-sm font-bold brand-gradient text-white">
-                    GO BACK & TRY AGAIN
-                  </button>
-                  <button onClick={() => navigate({ to: "/support" })} className="w-full h-12 rounded-2xl flex items-center justify-center gap-2 text-sm font-bold border border-border">
-                    <Headphones className="h-4 w-4" /> CONTACT SUPPORT
-                  </button>
-                  <a href={TELEGRAM_CHANNEL} target="_blank" rel="noopener noreferrer" className="w-full h-12 rounded-2xl flex items-center justify-center gap-2 text-sm font-bold bg-primary text-primary-foreground">
-                    <TelegramIcon className="h-4 w-4" /> JOIN TELEGRAM
-                  </a>
-                </div>
+                    <div className="my-5 border-t border-border" />
 
-                <button onClick={() => navigate({ to: "/dashboard" })} className="mt-5 w-full h-11 rounded-2xl text-sm font-bold border border-border">
-                  Back to Dashboard
-                </button>
-              </motion.div>
+                    <div className="rounded-2xl bg-review-green-soft p-4">
+                      <h3 className="text-base font-bold text-review-navy">What’s happening next?</h3>
+                      <p className="mt-2 text-sm leading-relaxed text-foreground/80">
+                        Our MONIEPOINT PAY payment verification agent will review your payment transaction.
+                      </p>
+                      <p className="mt-2 text-sm leading-relaxed text-foreground/80">
+                        After successful verification, your personal MPAY ID CODE will be generated and made available in your account.
+                      </p>
+                    </div>
+
+                    <p className="mt-3 text-center text-xs leading-relaxed text-muted-foreground">
+                      This app cannot send receipts to a verification agent yet. Contact support to complete manual review; no MPAY ID has been issued.
+                    </p>
+
+                    <div className="mt-auto space-y-2 pt-5">
+                      <Button onClick={() => navigate({ to: "/dashboard" })} className="h-12 w-full rounded-xl bg-review-green text-primary-foreground hover:bg-review-green/90">
+                        Back to Dashboard
+                      </Button>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button variant="outline" onClick={() => navigate({ to: "/support" })} className="h-11 rounded-xl text-xs sm:text-sm">
+                          <Headphones className="h-4 w-4" aria-hidden="true" /> Contact Support
+                        </Button>
+                        <Button asChild variant="outline" className="h-11 rounded-xl text-xs sm:text-sm">
+                          <a href={TELEGRAM_CHANNEL} target="_blank" rel="noopener noreferrer">
+                            <TelegramIcon className="h-4 w-4" /> Join Telegram
+                          </a>
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.section>
             )}
 
           </AnimatePresence>

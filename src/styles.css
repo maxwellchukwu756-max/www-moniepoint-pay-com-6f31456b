@@ -33,6 +33,11 @@
   --color-brand: var(--brand);
   --color-brand-soft: var(--brand-soft);
   --color-surface: var(--surface);
+  --color-review-navy: var(--review-navy);
+  --color-review-green: var(--review-green);
+  --color-review-green-soft: var(--review-green-soft);
+  --color-review-amber: var(--review-amber);
+  --color-review-amber-soft: var(--review-amber-soft);
   --font-display: "Inter", system-ui, sans-serif;
   --shadow-soft: 0 10px 30px -12px rgba(0, 0, 255, 0.18);
   --shadow-card: 0 4px 24px -6px rgba(0, 0, 255, 0.08);
@@ -71,6 +76,11 @@
   --sidebar-accent-foreground: #0000ff;
   --sidebar-border: #e6e8f5;
   --sidebar-ring: #0000ff;
+  --review-navy: oklch(0.22 0.055 264);
+  --review-green: oklch(0.65 0.16 163);
+  --review-green-soft: oklch(0.965 0.035 163);
+  --review-amber: oklch(0.54 0.12 52);
+  --review-amber-soft: oklch(0.97 0.04 52);
 }
 
 @layer base {
